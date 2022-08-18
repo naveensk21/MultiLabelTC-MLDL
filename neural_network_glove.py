@@ -7,6 +7,7 @@ from numpy import array
 from numpy import asarray
 from numpy import zeros
 import time
+import tqdm
 
 # Preprocessing
 from nltk.stem import WordNetLemmatizer
@@ -16,7 +17,7 @@ from nltk.corpus import stopwords
 from sklearn.preprocessing import MultiLabelBinarizer
 from gensim.models import Word2Vec
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras_preprocessing.sequence import pad_sequences
 
 from sklearn.model_selection import train_test_split
 from ast import literal_eval
@@ -36,17 +37,14 @@ import tensorflow as tf
 # ------------------------
 from numpy import array
 from keras.preprocessing.text import one_hot
-from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers.core import Activation, Dropout, Dense
 from keras.layers import Flatten, LSTM
 from keras.layers import GlobalMaxPooling1D
 from keras.models import Model
-from keras.layers.embeddings import Embedding
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
 from keras.layers import Input
-from keras.layers.merge import Concatenate
 # --------------------------
 
 
@@ -117,7 +115,6 @@ y_train_mlb = mlb.fit_transform(y_train)
 y_test_mlb = mlb.transform(y_test)
 label_classes = mlb.classes_
 
-
 # word embedding
 tokenizer = Tokenizer(num_words=5000)
 tokenizer.fit_on_texts(X_train)
@@ -132,76 +129,93 @@ X_train = pad_sequences(X_train, padding='post', maxlen=max_len)
 X_test = pad_sequences(X_test, padding='post', maxlen=max_len)
 
 # glove filepath (use glove embedding to convert the text into numerical representation)
-glove = open('/Users/Naveen/Downloads/glove.6B.100d.txt', encoding='utf8')
+# glove = open('dataset/glove.6B.100d.txt', encoding='utf8')
 
 
-def build_embedding_matrix(glove, word_index, embedding_dimension):
-    embedding_matrix_glove = np.zeros((vocab_size, embedding_dimension))
-
-    for line in glove:
-        word, *vector = line.split()
-        if word in word_index:
-            indx = word_index[word]
-            embedding_matrix_glove[indx] = np.array(vector, dtype=np.float32)[:embedding_dimension]
-    return embedding_matrix_glove
-
+# def build_embedding_matrix(glove, word_index, embedding_dimension):
+#     embedding_matrix_glove = np.zeros((vocab_size, embedding_dimension))
+#
+#     for line in glove:
+#         word, *vector = line.split()
+#         if word in word_index:
+#             indx = word_index[word]
+#             embedding_matrix_glove[indx] = np.array(vector, dtype=np.float32)[:embedding_dimension]
+#     return embedding_matrix_glove
+#
+#
 embed_dim = 100
-embedding_matrix = build_embedding_matrix(glove, tokenizer.word_index, embed_dim)
+# embedding_matrix = build_embedding_matrix(glove, tokenizer.word_index, embed_dim)
+embed_vector_len = 100
 
-# embeddings_dictionary = dict()
-#
-# for line in glove:
-#     each_records = line.split()
-#     word = each_records[0]
-#     vector_dimensions = asarray(each_records[1:], dtype='float32')
-#     embeddings_dictionary[word] = vector_dimensions
-# glove.close()
-#
-# embedding_matrix = zeros((vocab_size, 100))
-# for word, index in tokenizer.word_index.items():
-#     embedding_vector = embeddings_dictionary.get(word)
-#     if embedding_vector is not None:
-#         embedding_matrix[index] = embedding_vector
 
-counters = {}
-for labels in y:
-    for label in labels:
-        if counters.get(label) is not None:
-            counters[label] += 1
-        else:
-            counters[label] = 1
+def construct_embed_matrix(word_index):
+    embed_dict = dict()
+    with open('dataset/glove/glove.42B.300d.txt', 'r', errors='ignore', encoding='utf8') as f:
+        for line in f:
+            values = line.split()
+            word = ''.join(values[:-300])
+            if word in word_index.keys():
+                # get vector
+                vector = np.asarray(values[-300:], 'float32')
+                embed_dict[word] = vector
 
-# calculates class weights for label due to label imbalance
-class_weights = {}
-for index, label in enumerate(label_classes):
-    class_weights[index] = len(y) / counters.get(label)
+    num_words = len(word_index) + 1
 
-# cnn model
-# build the neural network
-filter_length = 300
-n_classes = len(mlb.classes_)
+    embedding_matrix = np.zeros((num_words, embed_vector_len))
+
+    for word, i in tqdm.tqdm(word_index.items()):
+        if i < num_words:
+            vect = embed_dict.get(word, [])
+            if len(vect)> 0:
+                embedding_matrix[i] = vect[:embed_vector_len]
+    return embedding_matrix
+
+embedding_matrix = construct_embed_matrix(tokenizer.word_index)
+
+
+def build_cnn_model():
+    n_classes = len(mlb.classes_)
+
+    model = Sequential()
+
+    model.add(Embedding(vocab_size, embed_dim, input_length=max_len, weights=[embedding_matrix], trainable=False))
+    model.add(Dropout(0.6))
+    model.add(Conv1D(350, 4, padding='valid', activation='relu', strides=1))
+    model.add(Dropout(0.6))
+    model.add(Conv1D(370, 3, padding='valid', activation='relu', strides=1))
+    model.add(GlobalMaxPool1D())
+    model.add(Flatten())
+    model.add(Dense(n_classes))
+    model.add(Activation('sigmoid'))
+
+    return model
+
+
+# params
 start = time.time()
+epoch = 20
+# 19-0.01, 17-0.11(high recall),
+batch_size = 16
+lr = 0.001
+opt = keras.optimizers.Adam(learning_rate=lr)
 
-opt = keras.optimizers.Adam(learning_rate=0.0001)
+model = build_cnn_model()
 
-model = Sequential()
-model.add(Embedding(vocab_size, embed_dim, input_length=max_len, weights=[embedding_matrix], trainable=True))
-model.add(Dropout(0.5))
-model.add(Conv1D(filter_length, 3, padding='valid', activation='relu', strides=1))
-model.add(GlobalMaxPool1D())
-model.add(Flatten())
-model.add(Dense(n_classes))
-model.add(Activation('sigmoid'))
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[Precision(), keras.metrics.Recall()])
+model.summary()
 
-print('compile model....')
-history = model.fit(X_train, y_train_mlb, epochs=10, batch_size=32, validation_split=0.2, shuffle=True)
+# compile the model
+model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall()])
 
+# fit the model
+history = model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
+
+# display scores
 print("Time taken to fit the model: ", round(time.time()-start, 0), 'seconds')
 score = model.evaluate(X_test, y_test_mlb)
 print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
+print(f'{model.metrics_names[3]}: {score[3]}')
 
 
 

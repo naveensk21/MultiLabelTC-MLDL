@@ -11,7 +11,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras_preprocessing.sequence import pad_sequences
 # For Vectorization
 from sklearn.preprocessing import MultiLabelBinarizer
 from gensim.models import Word2Vec
@@ -21,13 +21,14 @@ import tensorflow as tf
 import tensorflow.python.keras.optimizer_v1
 from tensorflow import keras
 from keras.layers import Dense, Activation, Embedding, GlobalMaxPool1D, \
-    Dropout, Conv1D, LSTM, Flatten, BatchNormalization, SimpleRNN
+    Dropout, Conv1D, LSTM, Flatten, BatchNormalization, SimpleRNN, GRU, Bidirectional, GlobalAveragePooling1D
 from keras.models import Sequential
 from keras import Input
 from tensorflow.python.keras.optimizer_v1 import Adam
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau
 # metrics
 from keras.metrics import Precision, Recall
+from keras import backend as K
 # plot
 from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
@@ -61,24 +62,7 @@ def create_x_y():
 X, y = create_x_y()
 
 
-# plot word distribution of policy_texts
-def plot_word_distri(sentence_list):
-    word_length = []
-    for sentence in sentence_list:
-        words = sentence.split()
-        senten_len = len(words)
-        word_length.append(senten_len)
-
-    plt.figure(figsize=(12, 6))
-    values = word_length
-    plt.title('Word distribution of the policy text')
-    plt.grid()
-    plt.bar(range(len(sentence_list)), values)
-    plt.xlabel(f'Number of policy text: {len(sentence_list)}')
-    plt.ylabel('No. of words in a policy text')
-    plt.show()
-
-# ----- Preprocessing -----
+############## Preprocessing the policy text ####################
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(re.compile('<.*?>'), '', text)
@@ -99,24 +83,7 @@ print('--preprocessing data--')
 preprocessed_text = list(map(lambda text: preprocess_text(text), X))
 print('--preprocessing done--')
 
-# plot word distribution of preprocessed policy texts
-def plot_prepro_word_distri(pre_text):
-    word_length = []
-    for senten in pre_text:
-        words = senten.split()
-        senten_len = len(words)
-        word_length.append(senten_len)
-
-    plt.figure(figsize=(12, 6))
-    values = word_length
-    plt.title('Word distribution of the policy text')
-    plt.grid()
-    plt.bar(range(len(pre_text)), values)
-    plt.xlabel(f'Number of policy text: {len(pre_text)}')
-    plt.ylabel('No. of words in a preprocessed policy text')
-    plt.show()
-
-# --------- build the word2vec model ---------
+################# build the word2vec model #######################
 # tokenize the the policy texts
 tokenized_data = []
 for sentence in preprocessed_text:
@@ -144,8 +111,11 @@ for word in vocab:
 # print(f'key-value pair entries: {len(word_vect_dict)}')
 
 # encode the text and define parameters
+
+
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(preprocessed_text)
+
 
 # find the maximum length = 214
 def get_max_len(encoded_text):
@@ -182,10 +152,11 @@ for word, i in tokenizer.word_index.items():
 
 print(f'converted words {hits} ({misses} missed words)')
 
+
 # split the dataset into training and testing
 X_train, X_test, y_train, y_test = train_test_split(ptext_pad, y, test_size=0.2, random_state=42)
 
-# ------------ binarize the multiple labels ------------
+################### binarize the multiple labels #####################
 mlb = MultiLabelBinarizer()
 y_train_mlb = mlb.fit_transform(y_train)
 y_test_mlb = mlb.transform(y_test)
@@ -200,20 +171,6 @@ for labels in y:
         else:
             counters[label] = 1
 
-
-# plot bar chart to visualize the distribution of labels (check for imbalance)
-def plot_class_distribution2(count):
-    plt.figure(figsize=(12, 6))
-    values = list(count.values())
-    name = list(count.keys())
-    plt.title('All labels: Distribution of the no. of times a label appeared in a policy text')
-    plt.grid()
-    plt.bar(range(len(count)), values)
-    plt.xlabel('Label numbers. (All 36 labels)')
-    plt.ylabel('No. of times each label appeared in the whole dataset')
-    plt.show()
-
-
 # calculates class weights for label due to label imbalance
 def get_class_weights(label_clss):
     class_weights = {}
@@ -221,14 +178,75 @@ def get_class_weights(label_clss):
         class_weights[index] = len(y) / counters.get(label)
     return class_weights
 
+# --- custom metrics ---
+def c_recall(y_test, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_test * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_test, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+    return recall
 
-# ------- build lstm model --------
+
+def c_precision(y_test, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_test * y_pred, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
+
+
+def c_f1(y_test, y_pred):
+    precision = c_precision(y_test, y_pred)
+    recall = c_recall(y_test, y_pred)
+    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+
+
+# ################### build lstm model ###################
 def lstm_model():
-    pass
+    model = Sequential()
+    model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix], trainable=False))
+    model.add(Dropout(0.5))
+
+    model.add(Bidirectional(LSTM(256, return_sequences=True)))
+    # model.add(Conv1D(64, kernel_size=3,
+    #            padding="valid"))
+    #
+    # model.add(GlobalMaxPool1D())
+    model.add(Flatten())
+
+    model.add(Dense(36))
+
+    model.add(Activation('sigmoid'))
+
+    return model
+
+start = time.time()
+epoch = 30
+batch_size = 16
+lr = 0.001
+opt = keras.optimizers.Adam(learning_rate=lr)
+
+model = lstm_model()
+
+model.summary()
+
+# compile the model
+model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), c_f1])
+
+# fit the model
+history = model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
+
+# display scores
+print("Time taken to fit the model: ", round(time.time()-start, 0), 'seconds')
+score = model.evaluate(X_test, y_test_mlb)
+print(f'{model.metrics_names[0]}: {score[0]}')
+print(f'{model.metrics_names[1]}: {score[1]}')
+print(f'{model.metrics_names[2]}: {score[2]}')
+print(f'{model.metrics_names[3]}: {score[3]}')
 
 
+exit()
 
-# --- optuna optimization ---
+
+# #################### Optuna optimization ########################
 def objective(trial):
     # clear clutter from previous sessions
     keras.backend.clear_session()
@@ -284,19 +302,51 @@ def objective(trial):
     return val_precision
 
 
-study = optuna.create_study(direction="minimize")
-study.optimize(objective, n_trials=20, timeout=None)
-print(f"Number of finished trials: {len(study.trials)}")
-print(f"Best trial: {study.best_trial.number}")
-print(f"Best trial value: {study.best_trial.value}")
+# create a study for optimization
+# study = optuna.create_study(directions=['maximize', 'maximize'])
+# study = optuna.create_study(direction='maximize')
+# study.optimize(objective, n_trials=10, timeout=None)
 
-# display the optimum hyperparameters
-print("  Best Params: ")
-for key, value in study.best_trial.params.items():
-    print(f"    {key}: {value}")
+#
+# def multiple_metric_stats(study):
+#     # --- stats for multiple metrics ---
+#     print('--- Study statistics ---')
+#     # print(f'"Number of pruned trials: {len(pruned_trials)}')
+#     print(f"Number of completed trials: {len(study.trials)}")
+#
+#     for study_trials in study.best_trials:
+#         metrics = study_trials.values
+#         parameters = study_trials.params
+#         trial_num = study_trials.number
+#         print(f'Trial Number: {trial_num}')
+#         print(f'Metric: {metrics} ')
+#         print('Params')
+#         for key, value in parameters.items():
+#             print(f'   {key}: {value}')
+#         print(" ")
+#
+#
+# def single_metric_stats(study):
+#     # --- stats for single metrics ---
+#     print('--- Study statistics ---')
+#     print(f"Number of completed trials: {len(study.trials)}")
+#     print(f"Best trial: {study.best_trial.number}")
+#     print(f"Best trial value: {study.best_trial.value}")
+#     print("  Best Params: ")
+#     for key, value in study.best_trial.params.items():
+#         print(f"    {key}: {value}")
 
-opt_fig = optuna.visualization.plot_optimization_history(study)
-opt_fig.show()
+# def optuna_visual(study):
+#     # plot the trials from the study
+#     optuna_fig1 = optuna.visualization.plot_optimization_history(study)
+#     # plots the importance params
+#     optuna_fig2 = optuna.visualization.plot_param_importances(study)
+#     optuna_fig1.show()
+#     optuna_fig2.show()
+
+# multiple_metric_stats(study)
+# single_metric_stats(study)
+# optuna_visual(study)
 
 
 

@@ -11,7 +11,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras_preprocessing.sequence import pad_sequences
 # For Vectorization
 from sklearn.preprocessing import MultiLabelBinarizer
 from gensim.models import Word2Vec
@@ -33,9 +33,13 @@ from sklearn.metrics import average_precision_score
 # plot
 from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
-#optuna
+# optuna
 import optuna
 from optuna import trial
+# keras tuner
+import keras_tuner
+from keras import layers
+from keras_tuner import RandomSearch
 
 
 dataset_file_path = 'top_40_labels_dataset.json'
@@ -293,11 +297,12 @@ precision: 0.5894736647605896
 recall: 0.6363636255264282
 c_f1: 0.6027687191963196
 
-# bs-16, lr-0.001, dp-0.6-0.5, conv-130,3
-loss: 0.12530609965324402
-precision: 0.6222222447395325
-recall: 0.48275861144065857
-c_f1: 0.5442800521850586
+# bs-16, lr-0.001, dp-0.6-0.6, conv-350,3, conv-370,3
+loss: 0.10055424273014069
+precision: 0.53125
+recall: 0.571865439414978
+c_f1: 0.5578574538230896
+
 
 #bs-16, lr-0.001, dp-0.6-0.6, conv-183,3
 loss: 0.29696816205978394
@@ -307,10 +312,9 @@ c_f1: 0.47736337780952454
 
 
 """
-
 # params
 start = time.time()
-epoch = 20
+epoch = 30
 # 19-0.01, 17-0.11(high recall),
 batch_size = 16
 lr = 0.001
@@ -339,13 +343,16 @@ exit()
 ################## K-fold ####################
 def kfold_val():
     cross_val = KFold(n_splits=5, shuffle=True, random_state=42)
+    # list of val scores
     val_loss = []
     val_precision = []
     val_recall = []
     fld_score = []
+    # params
     lr = 0.01
     opt = keras.optimizers.Adam(learning_rate=lr)
     fold_num = 1
+
     for train_i, test_i in cross_val.split(X_train, y_train_mlb):
         keras.backend.clear_session()
 
