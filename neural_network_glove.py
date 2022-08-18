@@ -150,7 +150,7 @@ embed_vector_len = 100
 
 def construct_embed_matrix(word_index):
     embed_dict = dict()
-    with open('dataset/glove/glove.42B.300d.txt', 'r', errors='ignore', encoding='utf8') as f:
+    with open('dataset/glove/glove.6B.100d.txt', 'r', errors='ignore', encoding='utf8') as f:
         for line in f:
             values = line.split()
             word = ''.join(values[:-300])
@@ -215,7 +215,6 @@ score = model.evaluate(X_test, y_test_mlb)
 print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
-print(f'{model.metrics_names[3]}: {score[3]}')
 
 
 
