@@ -5,6 +5,7 @@ import string
 import time
 import os
 import numpy as np
+
 # Preprocessing
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -12,10 +13,12 @@ from nltk.tokenize import word_tokenize
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
 from keras_preprocessing.sequence import pad_sequences
+
 # For Vectorization
 from sklearn.preprocessing import MultiLabelBinarizer
 from gensim.models import Word2Vec
 from sklearn.utils import compute_class_weight
+
 # building model
 import tensorflow as tf
 import tensorflow.python.keras.optimizer_v1
@@ -26,16 +29,20 @@ from keras import Input
 from tensorflow.python.keras.optimizer_v1 import Adam
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau
 from sklearn.model_selection import KFold, StratifiedKFold
+
 # metrics
 from keras.metrics import Precision, Recall
 from keras import backend as K
 from sklearn.metrics import average_precision_score
+
 # plot
 from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
+
 # optuna
 import optuna
 from optuna import trial
+
 # keras tuner
 import keras_tuner
 from keras import layers
@@ -67,23 +74,6 @@ def create_x_y():
 X, y = create_x_y()
 
 
-# plot word distribution of policy_texts
-def plot_word_distri(sentence_list):
-    word_length = []
-    for sentence in sentence_list:
-        words = sentence.split()
-        senten_len = len(words)
-        word_length.append(senten_len)
-
-    plt.figure(figsize=(12, 6))
-    values = word_length
-    plt.title('Word distribution of the policy text')
-    plt.grid()
-    plt.bar(range(len(sentence_list)), values)
-    plt.xlabel(f'Number of policy text: {len(sentence_list)}')
-    plt.ylabel('No. of words in a policy text')
-    plt.show()
-
 # ----- Preprocessing -----
 def preprocess_text(text):
     text = text.lower()
@@ -105,22 +95,6 @@ print('--preprocessing data--')
 preprocessed_text = list(map(lambda text: preprocess_text(text), X))
 print('--preprocessing done--')
 
-# plot word distribution of preprocessed policy texts
-def plot_prepro_word_distri(pre_text):
-    word_length = []
-    for senten in pre_text:
-        words = senten.split()
-        senten_len = len(words)
-        word_length.append(senten_len)
-
-    plt.figure(figsize=(12, 6))
-    values = word_length
-    plt.title('Word distribution of the policy text')
-    plt.grid()
-    plt.bar(range(len(pre_text)), values)
-    plt.xlabel(f'Number of policy text: {len(pre_text)}')
-    plt.ylabel('No. of words in a preprocessed policy text')
-    plt.show()
 
 # --------- build the word2vec model ---------
 # tokenize the the policy texts
@@ -205,20 +179,6 @@ for labels in y:
             counters[label] += 1
         else:
             counters[label] = 1
-
-
-# plot bar chart to visualize the distribution of labels (check for imbalance)
-def plot_class_distribution2(count):
-    plt.figure(figsize=(12, 6))
-    values = list(count.values())
-    name = list(count.keys())
-    plt.title('All labels: Distribution of the no. of times a label appeared in a policy text')
-    plt.grid()
-    plt.bar(range(len(count)), values)
-    plt.xlabel('Label numbers. (All 36 labels)')
-    plt.ylabel('No. of times each label appeared in the whole dataset')
-    plt.show()
-
 
 # calculates class weights for label due to label imbalance
 class_weights = {}
