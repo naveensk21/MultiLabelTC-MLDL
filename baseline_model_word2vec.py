@@ -1,26 +1,21 @@
-import json
-import random
-import re # regex
-import time
 # Ignore  the warnings
 import warnings
 warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 
-import logging as logger
-import tensorflow as tf
-from keras import backend as K
-
 # data manipulation
 import numpy as np
 import string
+import json
+import random
+import re
+import time
 
 # Preprocessing
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
 # For Vectorizing
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MultiLabelBinarizer
 from gensim.models import Word2Vec
 
@@ -147,10 +142,11 @@ for vector in X_test_vect:
 np.random.seed(42)
 start=time.time()
 base_classifier = BinaryRelevance(
-    classifier=RandomForestClassifier(n_estimators=300, min_samples_split=2, min_samples_leaf=1, max_features='auto',
-                                      max_depth=16, random_state=42),
-    # classifier=LinearSVC(C=30, tol=0.1),
-    require_dense=[False, True])
+    # classifier=RandomForestClassifier(n_estimators=400, min_samples_split=2, min_samples_leaf=2, max_features='auto',
+    #                                   max_depth=16, random_state=42),
+    # classifier=LogisticRegression(C=520, tol=0.01),
+    classifier=LinearSVC(C=30, tol=0.1),
+    require_dense=[True, True])
 
 # # fit the model
 base_classifier.fit(X_train_vector_avg, y_train)
@@ -171,92 +167,44 @@ br_hamm = metrics.hamming_loss(y_test, y_pred)
 
 # display the results
 print('Classifier Results')
-print('Prediction Score:', round(br_precision, 3))
+print('Precision:', round(br_precision, 3))
 print('Recall: ', round(br_rec, 3))
 print('F1-score:', round(br_f1, 3))
-print('Hamming Loss:', round(br_hamm, 3))
+print('Hamming Loss:', round(br_hamm, 3), '\n')
 
-"""
-Classifier Results
-Prediction Score: 0.461
-Recall:  0.254
-F1-score: 0.361
-Hamming Loss: 0.032
-"""
+exit()
+# -------- grid parameters ----------
+rf_grid = {'classifier__n_estimators': [200, 300, 350, 400, 450,  500],
+           'classifier__min_samples_split': [1, 2, 3],
+           'classifier__min_samples_leaf': [2, 3, 4],
+           'classifier__max_depth': [10, 12, 14, 16, 17, 18]
+           }
+lsvc_grid = {'classifier__C': [x for x in range(0, 300, 20)],'classifier__tol': [0.1, 0.01, 0.001]}
+logist_grid = {'classifier__C': [x for x in range(0, 600, 20)], 'classifier__tol':[1, 0.1, 0.01, 0.001, 0.0001]}
+
 
 # ------- GridSearchCV---------
-# grid_param = {
-#     'classifier__n_estimators': [300, 400, 500],
-#     'classifier__min_samples_split': [1, 2, 3],
-#     'classifier__min_samples_leaf': [1, 2, 3],
-#     }
-#
-# clf = GridSearchCV(base_classifier, param_grid=grid_param, scoring='f1_macro', n_jobs=-1, verbose=2)
-# print('Getting Best Parameter----')
-# start=time.time()
-# clf.fit(X_train_vect_avg, y_train)
-#
-# # print(clf.estimator.get_params().keys())
-# print(clf.best_params_)
-# print(f'Time taken to run grid search: ', round(time.time()-start, 0), 'seconds')
+def grid_search(param_grid):
+    clf = GridSearchCV(base_classifier, param_grid=param_grid, scoring='f1_macro', n_jobs=-1, verbose=2)
+    return clf
+
 
 # ------ random search -------
-# rf_grid = {'classifier__n_estimators': [300, 400],
-#            'classifier__min_samples_split': [1,2],
-#            'classifier__min_samples_leaf': [2, 3],
-#            'classifier__max_depth': [16, 17],
-#            }
-#
-# lsvc_grid = {'classifier__C': [10, 20, 30, 40, 50, 60, 100, 200],'classifier__tol': [0.1, 0.01, 0.001]}
-#
-# # logist_grid = {'classifier__C': [20, 50, 80, 100, 200, 300, 400, 500], 'classifier__tol':[1, 0.1, 0.01, 0.001, 0.0001]}
-#
-# rf_rgridsch = RandomizedSearchCV(estimator=base_classifier, param_distributions=lsvc_grid, cv=5, n_iter=80)
-# start = time.time()
-# print('Getting Best Parameter----')
-# rf_rgridsch.fit(X_train_vect_avg, y_train)
-#
-# print(rf_rgridsch.best_params_)
-# print("Time take: ", round(time.time()-start, 0), 'seconds')
+def random_search(param_grid):
+    rf_rgridsch = RandomizedSearchCV(estimator=base_classifier, param_distributions=param_grid, cv=5, n_iter=30)
+    return rf_rgridsch
+
+
+start = time.time()
+search_cv = random_search(lsvc_grid)
+
+print('Retrieving best parameters....')
+search_cv.fit(X_train_vector_avg, y_train)
+print(search_cv.best_params_)
+print("Time take: ", round(time.time()-start, 0), 'seconds')
 
 #best param from colab
 # {'classifier__n_estimators': 400, 'classifier__min_samples_split': 2, 'classifier__min_samples_leaf': 1, 'classifier__max_features': 'auto', 'classifier__max_depth': 16}
 
+# {'classifier__n_estimators': 400, 'classifier__min_samples_split': 2, 'classifier__min_samples_leaf': 2, 'classifier__max_depth': 16}
 
-#optuna
-# import optuna
-# from optuna import trial
-#
-# def objective(trial):
-#
-#     n_estimators = trial.suggest_categorical('n_estimators', [200, 300, 400, 500, 600])
-#     min_samples_split = trial.suggest_categorical('min_sample_split', [1, 2, 3])
-#     min_samples_leaf = trial.suggest_categorical('min_samples_leaf', [2, 3, 4])
-#     max_depth = trial.suggest_categorical('max_depths', [15, 16, 17, 18])
-#
-#     br_rf = BinaryRelevance(
-#         classifier=RandomForestClassifier(n_estimators=n_estimators, min_samples_split=min_samples_split,
-#                                           min_samples_leaf=min_samples_leaf,
-#                                           max_features='auto',
-#                                           max_depth=max_depth,
-#                                           random_state=42),
-#         # classifier=LinearSVC(C=30, tol=0.1),
-#         require_dense=[False, True])
-#
-#     score = cross_val_score(br_rf, X_train, y_train, cv=5, scoring="f1")
-#     rf_f1_mean = score.mean()
-#
-#     return rf_f1_mean
-#
-#
-# study = optuna.create_study(direction='maximize')
-# study.optimize(objective, n_trials=50, timeout=None)
-#
-# optimized_rf = BinaryRelevance(RandomForestClassifier(n_estimators=study.best_params['n_estimators'],
-#                                                       min_samples_split=study.best_params['min_samples_split'],
-#                                                       min_samples_leaf=study.best_params['min_samples_leaf'],
-#                                                       max_features='auto',
-#                                                       max_depth=study.best_params['max_depth'],
-#                                                       random_state=42))
-#
-# optimized_rf.fit(X_train_vector_avg, y_train)

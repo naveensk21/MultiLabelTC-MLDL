@@ -99,7 +99,6 @@ X_test_tfidf = tfidf.transform(X_test)
 
 # print(tfidf.vocabulary_)
 
-
 # shapes of x and y
 # print(X_train_tfidf.shape)
 # print(X_test_tfidf.shape)
@@ -110,9 +109,9 @@ X_test_tfidf = tfidf.transform(X_test)
 # each target variable(y1,y2,...) is treated independently and reduced to n classification problems
 start=time.time()
 base_classifier = BinaryRelevance(
-    classifier=RandomForestClassifier(n_estimators=300, min_samples_split=2, min_samples_leaf=1, max_features='auto',
-                                      max_depth=16, random_state=42),
-    require_dense=[True, True])
+    classifier=RandomForestClassifier(n_estimators=200, min_samples_split=2, min_samples_leaf=1, max_features='auto',
+                                      max_depth=50, random_state=42),
+    require_dense=[False, True])
 
 # fit the model
 base_classifier.fit(X_train_tfidf, y_train)
@@ -137,39 +136,51 @@ print('Recall: ', round(br_rec, 3))
 print('F1-score:', round(br_f1, 3))
 print('Hamming Loss:', round(br_hamm, 3))
 
-"""
-Precision:  0.521
-Recall:  0.142
-F1-score: 0.266
-Hamming Loss: 0.032
-"""
-
+exit()
 # ----- gridsearch ------
-# parameters = {
+# grid_param_lsvc = {
 #     'classifier': [BinaryRelevance()],
 #     'classifier__classifier': [LinearSVC()],
 #     'classifier__classifier__C':[1.0, 5.0, 10.0, 15.0, 20.0],
 #     'classifier_classifier__tol': [0.0001, 0.00001, 0.000001, 0.00000001]
 # }
-#
+grid_param_rf = {
+    'classifier__n_estimators': [200, 300, 400, 500, 600],
+    'classifier__min_samples_split': [2, 4, 6],
+    'classifier__min_samples_leaf': [1, 2, 4],
+    'classifier__max_depth': [16, 18, 20, 30, 40, 50]
+    }
 
-# clf = GridSearchCV(LinearSVC(), parameters, scoring='f1_macro')
 
-# grid_param = {
-#     'classifier__n_estimators': [100, 200, 400, 600],
-#     # 'classifier__classifier__min_samples_split': [2, 5, 10],
-#     # 'classifier__classifier__min_samples_leaf': [1, 2, 4]
-#     # 'classifier__classifier__max_depth': [10, 20, 30, 40, 50, 60]
-#     }
-#
+def grid_search(params):
+    clf = GridSearchCV(base_classifier, param_grid=params, scoring='f1_macro')
+    return clf
+
+
+def random_search(params):
+    clf = RandomizedSearchCV(estimator=base_classifier, param_distributions=params, cv=5, n_iter=50)
+    return clf
+
+
+clf = random_search(grid_param_rf)
+clf.fit(X_train_tfidf, y_train)
+print('Retrieving best parameters....')
+print(clf.best_params_)
+
+
+
+
+
+# print(clf.estimator.get_params().keys())
+# clf = RandomizedSearchCV(estimator=base_classifier, param_distributions=grid_param_rf, cv=5, n_iter=50)
 # clf = GridSearchCV(base_classifier, param_grid=grid_param, scoring='f1_macro')
 # clf.fit(X_train_tfidf, y_train)
-#
-# print(clf.estimator.get_params().keys())
 # print(clf.best_params_)
-
-
-
+# {'classifier__n_estimators': 200, 'classifier__min_samples_split': 2, 'classifier__min_samples_leaf': 1, 'classifier__max_depth': 50}
+# Precision:  0.454
+# Recall:  0.151
+# F1-score: 0.264
+# Hamming Loss: 0.032
 
 
 

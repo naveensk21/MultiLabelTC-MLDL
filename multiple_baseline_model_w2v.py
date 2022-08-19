@@ -1,26 +1,31 @@
+# data manipulation
+import numpy as np
+import string
 import json
 import random
-import re # regex
+import re
 import time
+
 # Ignore  the warnings
 import warnings
 warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 import logging as logger
 import tensorflow as tf
-# data manipulation
-import numpy as np
-import string
+
 # Preprocessing
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+
 # For Vectorizing
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MultiLabelBinarizer
 from gensim.models import Word2Vec
+
 # Model Selection
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.model_selection import train_test_split
+
 # Classification
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
@@ -31,6 +36,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import NearestNeighbors
 from skmultilearn.problem_transform import BinaryRelevance, LabelPowerset, ClassifierChain
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+
 # Evaluation
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix, hamming_loss
 import sklearn.metrics as metrics

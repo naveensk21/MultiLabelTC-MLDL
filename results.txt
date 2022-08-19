@@ -1,0 +1,165 @@
+Python files
+------------
+1. collect_labels - collects the labels from the pretty print dataset and saves it as collected_label.json file
+2. collect_policy_text - collects all the policy text from the sanitized policies and saved it as collect_policy_text.json file
+3. collect_combined_data - combines the labels and policy text and saves it as collect_combined_data.json file
+4. collect_clean_combined_data - filters the invalid labels and saves the valid label dataset as collect_clean_combined_data.json
+5. collect_label_support - collects the label support from the clean_combined_data.json file to label_support.json
+6. collect_top_labels - collects the top label from label_support.json to x_top_labels.json
+7. collect_top_label_dataset - collects the top labels dataset including the policy text as x_top_labels_dataset.json
+8. baseline_model_tfidf - baseline model that classifies the multi labels using tfidf as a vectorizer
+9. baseline_model_word2vec - baseline model that classifies multi labels using word2vec as a vectorizer
+10. multiple_baseline_models - testing multiple classification model such as linear SVC, Randomforest, NaiveBayes, ect.
+11. nn_cnn_exp1 - cnn experiment 1 with one conv1d layer (w2v embedding)
+12. nn_cnn_exp1 - cnn experiment 2 with three conv1d layer (w2v embedding)
+13. neural_network_glove - shallow neural network to classify the labels with glove emebeddings
+
+################### Results for top 40 labels ####################
+-------------------------------------------------
+Multiple Baseline Model-word2vec
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Binary Relevance Precision:  0.509
+Binary Relevance Recall:  0.244
+Binary Relevance F1-score: 0.305
+Binary Relevance Hamming Loss: 0.033
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Binary Relevance Precision:  0.367
+Binary Relevance Recall:  0.3
+Binary Relevance F1-score: 0.243
+Binary Relevance Hamming Loss: 0.068
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+Binary Relevance Precision:  0.222
+Binary Relevance Recall:  0.163
+Binary Relevance F1-score: 0.181
+Binary Relevance Hamming Loss: 0.035
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Binary Relevance Precision:  0.536
+Binary Relevance Recall:  0.336
+Binary Relevance F1-score: 0.381
+Binary Relevance Hamming Loss: 0.038
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Binary Relevance Precision:  0.549
+Binary Relevance Recall:  0.251
+Binary Relevance F1-score: 0.311
+Binary Relevance Hamming Loss: 0.034
+
+
+-------------------------------------------------
+Multiple Baseline Model-tfidf
+-------------------------------------------------
+# Classifier: <class 'sklearn.naive_bayes.MultinomialNB'>
+Binary Relevance Precision:  0.017
+Binary Relevance Recall:  0.005
+Binary Relevance F1-score: 0.044
+Binary Relevance Hamming Loss: 0.017
+
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Binary Relevance Precision:  0.201
+Binary Relevance Recall:  0.044
+Binary Relevance F1-score: 0.144
+Binary Relevance Hamming Loss: 0.016
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Binary Relevance Precision:  0.344
+Binary Relevance Recall:  0.195
+Binary Relevance F1-score: 0.328
+Binary Relevance Hamming Loss: 0.017
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+Binary Relevance Precision:  0.376
+Binary Relevance Recall:  0.119
+Binary Relevance F1-score: 0.25
+Binary Relevance Hamming Loss: 0.015
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Binary Relevance Precision:  0.429
+Binary Relevance Recall:  0.193
+Binary Relevance F1-score: 0.318
+Binary Relevance Hamming Loss: 0.016
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Binary Relevance Precision:  0.413
+Binary Relevance Recall:  0.161
+Binary Relevance F1-score: 0.309
+Binary Relevance Hamming Loss: 0.014
+
+
+-------------------------------------------------
+Baseline Model tf-idf
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Precision:  0.59
+Recall:  0.157
+F1-score: 0.305
+Hamming Loss: 0.031
+
+
+-------------------------------------------------
+Baseline Model Word2vec
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Precision: 0.524
+Recall:  0.252
+F1-score: 0.371
+Hamming Loss: 0.032
+
+
+-------------------------------------------------
+cnn network
+-------------------------------------------------
+# # bs-16, lr-0.001, dp-0.6-0.6, conv-160,4
+loss: 0.15778566896915436
+precision: 0.5239361524581909
+recall: 0.5596590638160706
+c_f1: 0.5378256440162659
+-------------------------
+loss: 0.14787784218788147
+precision: 0.5360000133514404
+recall: 0.5775862336158752
+c_f1: 0.5729897022247314
+--------------------------
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-250,3, conv1-270,3
+loss: 0.10036792606115341
+precision: 0.6052631735801697
+recall: 0.5154061913490295
+c_f1: 0.5591225624084473
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,4
+loss: 0.0927027016878128
+precision: 0.5697329640388489
+recall: 0.5714285969734192
+c_f1: 0.5692447423934937
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,3
+loss: 0.10056645423173904
+precision: 0.5894736647605896
+recall: 0.6363636255264282
+c_f1: 0.6027687191963196
+
+# bs-16, lr-0.001, dp-0.6-0.6, conv-350,3, conv-370,3
+loss: 0.10055424273014069
+precision: 0.53125
+recall: 0.571865439414978
+c_f1: 0.5578574538230896
+
+#bs-16, lr-0.001, dp-0.6-0.6, conv-183,3
+loss: 0.29696816205978394
+precision: 0.3586800694465637
+recall: 0.6983240246772766
+c_f1: 0.47736337780952454
+
+
+-------------------------------------------------
+Bidirectional-LSTM
+-------------------------------------------------
+
+
+
+
+

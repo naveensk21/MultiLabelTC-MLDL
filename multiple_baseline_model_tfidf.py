@@ -37,12 +37,11 @@ dataset_file_path = 'top_20_labels_dataset.json'
 # list of classfiers to test
 classifiers = [
     MultinomialNB(),
-    # NearestNeighbors(n_neighbors=5, radius=1.0, leaf_size=30),
-    RandomForestClassifier(n_estimators=100),
-    LinearSVC(C=400, tol=0.1),
-    SVC(),
-    AdaBoostClassifier(),
-    LogisticRegression()
+    RandomForestClassifier(n_estimators=300, min_samples_split=2, min_samples_leaf=1, max_depth=16, max_features='auto'),
+    LinearSVC(C=150, tol=0.001),
+    SVC(C=20, tol=0.003),
+    AdaBoostClassifier(n_estimators=200, learning_rate=0.1),
+    LogisticRegression(tol=0.01, C=200)
 ]
 
 for classifier in classifiers:
@@ -137,23 +136,6 @@ for classifier in classifiers:
     # print('Binary Relevance Jaccardi Score(samples):', round(br_jr_score_samples, 3))
     # print('Binary Relevance Jaccardi Score(samples):', round(br_jr_score_macro, 3))
 
-    # # parameter grid
-    # grid_param = {
-    #     'classifier': [wrapper_classifier],
-    #     'classifier__classifier': [classifier],
-    #     # 'classifier__C': [800, 700, 600, 400, 200, 100, 60, 50, 40, 30],
-    #     'classifier__classifier__n_estimators': [100, 200, 300, 400, 500],
-    # }
-    # # grid search
-    # clf = GridSearchCV(wrapper_classifier, param_grid=grid_param, scoring='f1_macro')
-    #
-    # # print(clf.estimator.get_params().keys())
-    #
-    # # fit to estimate the parameters
-    # clf.fit(X_train_tfidf, y_train)
-    #
-    # # displat the best parameters
-    # print(clf.best_params_)
 
 
 

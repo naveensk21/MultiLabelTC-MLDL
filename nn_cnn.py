@@ -206,6 +206,7 @@ def c_f1(y_test, y_pred):
     recall = c_recall(y_test, y_pred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
+
 ############### Build model ################
 def build_cnn_model():
     n_classes = len(mlb.classes_)
@@ -214,9 +215,9 @@ def build_cnn_model():
 
     model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
     model.add(Dropout(0.6))
-    model.add(Conv1D(350, 4, padding='valid', activation='relu', strides=1))
+    model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     model.add(Dropout(0.6))
-    model.add(Conv1D(370, 3, padding='valid', activation='relu', strides=1))
+    model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     # model.add(Dropout(0.6))
     # model.add(Conv1D(165, 3, padding='valid', activation='relu', strides=1))
     model.add(GlobalMaxPool1D())
@@ -226,52 +227,7 @@ def build_cnn_model():
 
     return model
 
-"""
-# # bs-16, lr-0.001, dp-0.6-0.6, conv-160,4
-loss: 0.15778566896915436
-precision: 0.5239361524581909
-recall: 0.5596590638160706
-c_f1: 0.5378256440162659
--------------------------
-loss: 0.14787784218788147
-precision: 0.5360000133514404
-recall: 0.5775862336158752
-c_f1: 0.5729897022247314
---------------------------
 
-#bs-16, lr-0.01, dp-0.5-0.5, conv1-250,3, conv1-270,3
-loss: 0.10036792606115341
-precision: 0.6052631735801697
-recall: 0.5154061913490295
-c_f1: 0.5591225624084473
-
-#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,4
-loss: 0.0927027016878128
-precision: 0.5697329640388489
-recall: 0.5714285969734192
-c_f1: 0.5692447423934937
-
-#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,3
-loss: 0.10056645423173904
-precision: 0.5894736647605896
-recall: 0.6363636255264282
-c_f1: 0.6027687191963196
-
-# bs-16, lr-0.001, dp-0.6-0.6, conv-350,3, conv-370,3
-loss: 0.10055424273014069
-precision: 0.53125
-recall: 0.571865439414978
-c_f1: 0.5578574538230896
-
-
-#bs-16, lr-0.001, dp-0.6-0.6, conv-183,3
-loss: 0.29696816205978394
-precision: 0.3586800694465637
-recall: 0.6983240246772766
-c_f1: 0.47736337780952454
-
-
-"""
 # params
 start = time.time()
 epoch = 30
