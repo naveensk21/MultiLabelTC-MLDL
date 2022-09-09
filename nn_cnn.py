@@ -218,8 +218,11 @@ def build_cnn_model():
     model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     model.add(Dropout(0.6))
     model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
+
     # model.add(Dropout(0.6))
-    # model.add(Conv1D(165, 3, padding='valid', activation='relu', strides=1))
+    # model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
+    # model.add(Dropout(0.6))
+    # model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     model.add(GlobalMaxPool1D())
     model.add(Flatten())
     model.add(Dense(n_classes))
@@ -264,6 +267,7 @@ def kfold_val():
     val_precision = []
     val_recall = []
     fld_score = []
+
     # params
     lr = 0.01
     opt = keras.optimizers.Adam(learning_rate=lr)

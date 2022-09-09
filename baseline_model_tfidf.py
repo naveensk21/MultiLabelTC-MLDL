@@ -116,12 +116,12 @@ base_classifier = BinaryRelevance(
 # fit the model
 base_classifier.fit(X_train_tfidf, y_train)
 
-print('training time taken: ', round(time.time()-start, 0), 'seconds')
+end = time.time()
+process = round(end-start, 2)
+print(f'training time taken: {process} seconds')
 
 # get the predictions
-start=time.time()
 y_pred = base_classifier.predict(X_test_tfidf)
-print('prediction time taken....', round(time.time()-start, 0), 'seconds')
 
 # return the models metrics
 br_prec = metrics.precision_score(y_test, y_pred, average='macro')

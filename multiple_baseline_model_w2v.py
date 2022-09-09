@@ -157,7 +157,9 @@ for classifier in classifiers:
     # fit the model
     wrapper_classifier.fit(X_train_vect_avg, y_train)
 
-    print('training time taken: ', round(time.time() - start, 0), 'seconds')
+    end = time.time()
+    process = round(end - start, 2)
+    print(f'training time taken: {process} seconds')
 
     # get the predictions
     start = time.time()

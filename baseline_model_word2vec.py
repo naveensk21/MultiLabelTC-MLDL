@@ -113,7 +113,7 @@ words = set(vocab)
 X_train_vect = np.array([np.array([w2v_model.wv[i] for i in lst if i in words])for lst in X_train])
 X_test_vect = np.array([np.array([w2v_model.wv[i] for i in lst if i in words]) for lst in X_test])
 
-# check the length of the sentence with the sentence vector are the same
+# check the length of the sentence = sentence vector
 # for i, v in enumerate(X_train_vect):
 #     print(len(X_train_tokenized[i]), len(v))
 
@@ -140,7 +140,7 @@ for vector in X_test_vect:
 # ----- Binary Relevance with RandomForestClassifier -----
 # each target variable(y1,y2,...) is treated independently and reduced to n classification problems
 np.random.seed(42)
-start=time.time()
+start = time.time()
 base_classifier = BinaryRelevance(
     # classifier=RandomForestClassifier(n_estimators=400, min_samples_split=2, min_samples_leaf=2, max_features='auto',
     #                                   max_depth=16, random_state=42),
@@ -151,13 +151,13 @@ base_classifier = BinaryRelevance(
 # # fit the model
 base_classifier.fit(X_train_vector_avg, y_train)
 
-print('training time taken: ', round(time.time()-start, 0), 'seconds')
+end = time.time()
+process = round(end-start, 2)
+print(f'training time taken: {process} seconds')
+# print('training time taken: ', round(time.time()-start, 0), 'seconds')
 
 # get the predictions
-start=time.time()
 y_pred = base_classifier.predict(X_test_vector_avg)
-
-print('prediction time taken....', round(time.time()-start, 0), 'seconds \n')
 
 # return the models metrics - Evaluation
 br_precision = precision_score(y_test, y_pred, average='macro')
@@ -166,7 +166,7 @@ br_f1 = metrics.f1_score(y_test, y_pred, average='weighted')
 br_hamm = metrics.hamming_loss(y_test, y_pred)
 
 # display the results
-print('Classifier Results')
+print('--- Classifier Results ---')
 print('Precision:', round(br_precision, 3))
 print('Recall: ', round(br_rec, 3))
 print('F1-score:', round(br_f1, 3))
@@ -203,7 +203,8 @@ search_cv.fit(X_train_vector_avg, y_train)
 print(search_cv.best_params_)
 print("Time take: ", round(time.time()-start, 0), 'seconds')
 
-#best param from colab
+
+# best param from colab
 # {'classifier__n_estimators': 400, 'classifier__min_samples_split': 2, 'classifier__min_samples_leaf': 1, 'classifier__max_features': 'auto', 'classifier__max_depth': 16}
 
 # {'classifier__n_estimators': 400, 'classifier__min_samples_split': 2, 'classifier__min_samples_leaf': 2, 'classifier__max_depth': 16}

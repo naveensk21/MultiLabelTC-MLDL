@@ -2,6 +2,7 @@ import json
 import matplotlib.pyplot as plt
 import random
 import re
+import string
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 

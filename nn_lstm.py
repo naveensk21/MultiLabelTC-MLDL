@@ -205,7 +205,10 @@ def lstm_model():
     model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix], trainable=False))
     model.add(Dropout(0.5))
 
-    model.add(Bidirectional(LSTM(256, return_sequences=True)))
+    model.add(Bidirectional(LSTM(256,
+                                 recurrent_dropout=0.1,
+                                 dropout=0.1,
+                                 return_sequences=True)))
     # model.add(Conv1D(64, kernel_size=3,
     #            padding="valid"))
     #
