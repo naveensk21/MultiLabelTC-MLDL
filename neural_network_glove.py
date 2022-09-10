@@ -150,14 +150,16 @@ embed_vector_len = 100
 
 def construct_embed_matrix(word_index):
     embed_dict = dict()
-    with open('dataset/glove/glove.6B.100d.txt', 'r', errors='ignore', encoding='utf8') as f:
-        for line in f:
-            values = line.split()
-            word = ''.join(values[:-300])
-            if word in word_index.keys():
-                # get vector
-                vector = np.asarray(values[-300:], 'float32')
-                embed_dict[word] = vector
+    f = open('dataset/glove/glove.6B.100d.txt')
+    for line in f:
+        values = line.split()
+        word = values[0]
+        if word in word_index.keys():
+            # get vector
+            vector = np.asarray(values[1:], 'float32')
+            embed_dict[word] = vector
+    f.close()
+    print('Loaded %s word vectors.' % len(embed_dict))
 
     num_words = len(word_index) + 1
 
@@ -166,12 +168,13 @@ def construct_embed_matrix(word_index):
     for word, i in tqdm.tqdm(word_index.items()):
         if i < num_words:
             vect = embed_dict.get(word, [])
-            if len(vect)> 0:
+            if len(vect) > 0:
                 embedding_matrix[i] = vect[:embed_vector_len]
     return embedding_matrix
 
-embedding_matrix = construct_embed_matrix(tokenizer.word_index)
 
+embedding_matrix = construct_embed_matrix(tokenizer.word_index)
+# print(embedding_matrix[3])
 
 def build_cnn_model():
     n_classes = len(mlb.classes_)

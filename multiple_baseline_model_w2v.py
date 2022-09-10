@@ -57,7 +57,6 @@ classifiers = [
 for classifier in classifiers:
     print(f"Classifier: {classifier.__class__}")
 
-
     def create_x_y():
 
         with open(dataset_file_path) as fp:
