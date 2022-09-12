@@ -249,8 +249,11 @@ model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.
 # fit the model
 history = model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
 
+end = time.time()
+process = round(end - start, 2)
+print(f'training time taken: {process} seconds')
+
 # display scores
-print("Time taken to fit the model: ", round(time.time()-start, 0), 'seconds')
 score = model.evaluate(X_test, y_test_mlb)
 print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')

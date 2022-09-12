@@ -11,6 +11,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.multiclass import OneVsRestClassifier
 
@@ -36,12 +37,13 @@ dataset_file_path = 'top_20_labels_dataset.json'
 
 # list of classfiers to test
 classifiers = [
-    MultinomialNB(),
-    RandomForestClassifier(n_estimators=300, min_samples_split=2, min_samples_leaf=1, max_depth=16, max_features='auto'),
+    RandomForestClassifier(n_estimators=200, min_samples_split=2, min_samples_leaf=1, max_depth=50, max_features='auto'),
     LinearSVC(C=150, tol=0.001),
     SVC(C=20, tol=0.003),
     AdaBoostClassifier(n_estimators=200, learning_rate=0.1),
-    LogisticRegression(tol=0.01, C=200)
+    LogisticRegression(tol=0.01, C=200),
+    SGDClassifier(alpha=0.0001, max_iter=1000, tol=0.001, power_t=0.5, validation_fraction=0.1),
+    KNeighborsClassifier(n_neighbors=3)
 ]
 
 for classifier in classifiers:

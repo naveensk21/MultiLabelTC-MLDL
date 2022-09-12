@@ -247,145 +247,50 @@ def c_f1(y_test, y_pred):
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
-################## K-fold ####################
-def kfold_val():
-    cross_val = KFold(n_splits=5, shuffle=True, random_state=42)
-    # list of val scores
-    val_loss = []
-    val_precision = []
-    val_recall = []
-    fld_score = []
-    # params
-    lr = 0.01
-    opt = keras.optimizers.Adam(learning_rate=lr)
-    fold_num = 1
-
-    for train_i, test_i in cross_val.split(X_train, y_train_mlb):
-        keras.backend.clear_session()
-
-        # generate print
-        print('------------------------------------------')
-        print(f'Training for fold {fold_num}....')
-        print('------------------------------------------')
-
-        x_train_val, x_test_val = X_train[train_i], X_train[test_i]
-        y_train_val, y_test_val = y_train_mlb[train_i], y_train_mlb[test_i]
-
-        model = build_cnn_model()
-
-        rdc_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=1, min_lr=1e-06, verbose=1)
-        early_stop = EarlyStopping(monitor="val_loss", min_delta=0, patience=10, verbose=1, mode="auto",
-                                   baseline=None,
-                                   restore_best_weights=True)
-
-        model.compile(loss='binary_crossentropy', metrics=[Precision(), Recall(), c_f1], optimizer='adam')
-
-        histroy = model.fit(x_train_val, y_train_val, validation_data=(x_test_val, y_test_val),
-                            epochs=10,
-                            callbacks=[rdc_lr, early_stop],
-                            verbose=1, batch_size=32)
-
-        print('val_loss: ',min(histroy.history['val_loss']))
-        print('val_precision: ', max(histroy.history['val_precision']))
-        print('val_recall: ', max(histroy.history['val_recall']))
-
-        val_loss.append(min(histroy.history['val_loss']))
-        val_precision.append(max(histroy.history['val_precision']))
-        val_recall.append(max(histroy.history['val_recall']))
-
-        y_score = model.predict(X_test)
-        fld_score.append(y_score)
-        fold_num = fold_num + 1
-
-    return fld_score
-
-# --- get mean score ---
-# fold_result = kfold_val()
-#
-# test_prob = np.mean(fold_result, 0)
-# y_true = np.array(y_test_mlb)
-#
-# print('--- Mean Precision Score --- ')
-# mean_avg_precs = average_precision_score(y_true, test_prob, average='weighted')
-# print(f'Weighted Mean Precision Score: {mean_avg_precs}')
-
-
-############## plot history ################
-# ---- visualize the history ----
-def plot_history(history):
-    plt.plot(history.history['precision'])
-    plt.plot(history.history['val_precision'])
-    plt.title('Model Precision')
-    plt.ylabel('precision')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig(f'Precision({lr}-{batch_size}).png')
-    plt.show()
-
-    # summarize for loss
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('Model Loss')
-    plt.ylabel('precision')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig(f'Loss({lr}-{batch_size}).png')
-    plt.show()
-
-    # summarize for loss
-    plt.plot(history.history['recall'])
-    plt.plot(history.history['val_recall'])
-    plt.title('Model recall')
-    plt.ylabel('recall')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig(f'Recall ({lr}-{batch_size}).png')
-    plt.show()
-
-# plot_history()
-
 ############### optuna optimization #############
 def objective(trial):
     # clear clutter from previous sessions
     keras.backend.clear_session()
 
     # best number of hidden layers
-    # n_layers = trial.suggest_int('n_layers', 1, 3)
+    n_layers = trial.suggest_int('n_layers', 1, 4)
 
     # parameters
     dropouts = trial.suggest_float(f'dropout', 0.0, 0.7)
-    filters = trial.suggest_categorical(f'filters', [32, 64, 128, 256, 350, 400])
-    kernel_sizes = trial.suggest_categorical(f'kernel_sizes', [2, 3, 4])
-    stride = trial.suggest_int(f'strides', 1, 2)
+    # filters = trial.suggest_categorical(f'filters', [x for x in range(8, 400)])
+    # kernel_sizes = trial.suggest_categorical(f'kernel_sizes', [2, 3, 4])
+    # stride = trial.suggest_int(f'strides', 1, 2)
 
-    # create trial optuna model
+    # --- create trial optuna model ---
     opt_model = keras.Sequential()
     # embedding
     opt_model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
 
-    opt_model.add(Conv1D(filters=filters,
-                         kernel_size=kernel_sizes,
-                         strides=stride,
-                         padding='valid',
-                         activation='relu'))
+    # opt_model.add(Conv1D(filters=filters,
+    #                      kernel_size=kernel_sizes,
+    #                      strides=stride,
+    #                      padding='valid',
+    #                      activation='relu'))
 
     opt_model.add(Dropout(rate=dropouts))
 
     # optimize multiple convolution layers
-    # for i in range(n_layers):
-    #     # num_hidden = trial.suggest_int(f'n_units_l{i}', 48, 215, log=True)
-    #     # activation_choice = trial.suggest_categorical('activation', ['relu', 'linear'])
-    #     # optimize conv1d parameters
-    #     opt_model.add(Conv1D(filters=trial.suggest_categorical(f'filters{i}', [64, 128, 256, 350]),
-    #                          kernel_size=trial.suggest_categorical(f'kernel_sizes{i}', [3, 4]),
-    #                          strides=trial.suggest_int(f'strides{i}', 1, 2),
-    #                          padding='valid',
-    #                          activation='relu'))
-    #
-    #     # optimize for each layer dropouts
-    #     opt_model.add(Dropout(rate=trial.suggest_float(f'dropout{i}', 0.0, 0.7)))
+    for i in range(n_layers):
+        # num_hidden = trial.suggest_int(f'n_units_l{i}', 48, 215, log=True)
+        # activation_choice = trial.suggest_categorical('activation', ['relu', 'linear'])
+
+        # optimize conv1d parameters
+        opt_model.add(Conv1D(filters=trial.suggest_categorical(f'filters{i}', [x for x in range(8, 400)]),
+                             kernel_size=trial.suggest_categorical(f'kernel_sizes{i}', [2, 3, 4]),
+                             strides=trial.suggest_int(f'strides{i}', 1, 2),
+                             padding='valid',
+                             activation='relu'))
+
+        # optimize for each layer dropouts
+        opt_model.add(Dropout(rate=trial.suggest_float(f'dropout{i}', 0.0, 0.7)))
 
     opt_model.add(GlobalMaxPool1D())
+    opt_model.add(Flatten())
 
     # output layer
     opt_model.add(Dense(36, activation='sigmoid'))
@@ -403,7 +308,7 @@ def objective(trial):
     opt_model.compile(loss='binary_crossentropy', metrics=[Precision(), Recall(), c_f1], optimizer=learning_rate)
 
     # fit the model and calculate the best batch size
-    opt_histroy = opt_model.fit(X_train, y_train_mlb, validation_data=(X_test, y_test_mlb), epochs=40, callbacks=[rdc_lr, early_stop],
+    opt_histroy = opt_model.fit(X_train, y_train_mlb, validation_data=(X_test, y_test_mlb), epochs=50, callbacks=[rdc_lr, early_stop],
                                 verbose=0, batch_size=trial.suggest_int('size', 8, 128))
 
     val_loss = min(opt_histroy.history['val_loss'])
@@ -411,13 +316,13 @@ def objective(trial):
     val_precision = max(opt_histroy.history['val_precision'])
     val_f1 = max(opt_histroy.history['val_c_f1'])
 
-    return val_loss
+    return val_f1
 
 
 # create a study for optimization
 # study = optuna.create_study(directions=['maximize', 'maximize'])
-# study = optuna.create_study(direction='minimize')
-# study.optimize(objective, n_trials=4, timeout=None)
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=30, timeout=None)
 
 
 def multiple_metric_stats(study):
@@ -460,27 +365,9 @@ def optuna_visual(study):
 
 
 # multiple_metric_stats(study)
-# single_metric_stats(study)
+single_metric_stats(study)
 # optuna_visual(study)
 
-"""
----val loss
-Number of finished trials: 20
-Best trial: 17
-Best trial value: 0.09271051734685898
-  Best Params:
-    n_layers: 2
-    filters0: 256
-    kernel_sizes0: 4
-    strides0: 2
-    dropout0: 0.11445527501219918
-    filters1: 256
-    kernel_sizes1: 3
-    strides1: 1
-    dropout1: 0.11358533643666271
-    learning_rate: 0.0003768067456278191
-    size: 24
-"""
 
 
 

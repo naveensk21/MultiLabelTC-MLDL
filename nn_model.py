@@ -20,7 +20,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras_preprocessing.sequence import pad_sequences
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau
 # For Vectorization
 from sklearn.preprocessing import MultiLabelBinarizer
@@ -204,22 +204,46 @@ def shallow_model():
 
     model = Sequential()
     model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(128, activation='linear'))
-    model.add(Dropout(0.5))
+    model.add(Dense(238, activation='relu'))
+    model.add(Dropout(0.16561635684297463))
+    model.add(Dense(165, activation='relu'))
+    model.add(Dropout(0.11670028043193637))
 
     model.add(Flatten())
 
-    model.add(Dense(n_labels, activation='sigmoid' ))
+    model.add(Dense(n_labels, activation='sigmoid'))
 
     return model
 
 
+# params
+start = time.time()
+epoch = 30
+# 19-0.01, 17-0.11(high recall),
+batch_size = 89
+lr = 0.0005818750047791371
+opt = keras.optimizers.Adam(learning_rate=lr)
+
 model = shallow_model()
 
+model.summary()
+
+# compile the model
+model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), c_f1])
+
+# fit the model
+history = model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
+
+end = time.time()
+process = round(end - start, 2)
+print(f'training time taken: {process} seconds')
+
+# display scores
+score = model.evaluate(X_test, y_test_mlb)
+print(f'{model.metrics_names[0]}: {score[0]}')
+print(f'{model.metrics_names[1]}: {score[1]}')
+print(f'{model.metrics_names[2]}: {score[2]}')
+print(f'{model.metrics_names[3]}: {score[3]}')
 
 
 # --- tuning hyperparameters using optuna ---
@@ -230,23 +254,26 @@ def objective(trial):
     x_train_cv, x_test_cv, y_train_cv, y_test_cv = train_test_split(X_train, y_train_mlb, train_size=0.8,
                                                                     test_size=0.2, random_state=42)
     # best number of hidden layers
-    n_layers = trial.suggest_int('n_layers', 1, 3)
+    n_layers = trial.suggest_int('n_layers', 1, 4)
 
     # create trial optuna model
     opt_model = keras.Sequential()
 
+    opt_model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
+
     for i in range(n_layers):
         # best number of hidden nodes
-        num_hidden_nds = trial.suggest_int(f'n_units_l{i}', 48, 240, log=True)
+        num_hidden_nds = trial.suggest_int(f'n_units_l{i}', 16, 256, log=True)
 
         # best activation function
-        opt_model.add(keras.layers.Dense(num_hidden_nds,
-                                         activation=trial.suggest_categorical(f'activation{i}', ['relu', 'linear'])))
+        # opt_model.add(keras.layers.Dense(num_hidden_nds,
+        #                                  activation=trial.suggest_categorical(f'activation{i}', ['relu', 'linear'])))
+        opt_model.add(keras.layers.Dense(num_hidden_nds, activation='relu'))
         # opt_model.add(keras.layers.Dense(num_hidden_nds, input_shape=(len(ptext_pad[0]), ),
         #                                  activation=trial.suggest_categorical(f'activation{i}', ['relu', 'linear'])))
 
         # best dropout value
-        opt_model.add(keras.layers.Dropout(rate=trial.suggest_float(f'dropout{i}', 0.0, 0.6)))
+        opt_model.add(keras.layers.Dropout(rate=trial.suggest_float(f'dropout{i}', 0.0, 0.7)))
 
     opt_model.add(Flatten())
     # output layer
@@ -321,6 +348,8 @@ def optuna_visual(study):
 # multiple_metric_stats(study)
 single_metric_stats(study)
 # optuna_visual(study)
+
+exit()
 
 
 # k fold validation

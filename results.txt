@@ -10,13 +10,13 @@ Python files
 8. baseline_model_tfidf - baseline model that classifies the multi labels using tfidf as a vectorizer
 9. baseline_model_word2vec - baseline model that classifies multi labels using word2vec as a vectorizer
 10. multiple_baseline_models - testing multiple classification model such as linear SVC, Randomforest, NaiveBayes, ect.
-11. nn_cnn_exp1 - cnn experiment 1 with one conv1d layer (w2v embedding)
-12. nn_cnn_exp1 - cnn experiment 2 with three conv1d layer (w2v embedding)
-13. neural_network_glove - shallow neural network to classify the labels with glove emebeddings
+11. nn_cnn - cnn experiment 1 with one conv1d layer (w2v embedding)
+12. neural_network_glove - shallow neural network to classify the labels with glove emebeddings (pre-trained)
+
 
 ################### Results for top 40 labels ####################
 -------------------------------------------------
-Multiple Baseline Model-word2vec
+Multiple Baseline Model-word2vec (Binary Relevance)
 -------------------------------------------------
 # Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
 Binary Relevance Precision:  0.509
@@ -48,16 +48,93 @@ Binary Relevance Recall:  0.251
 Binary Relevance F1-score: 0.311
 Binary Relevance Hamming Loss: 0.034
 
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+
+
 
 -------------------------------------------------
-Multiple Baseline Model-tfidf
+Multiple Baseline Model-word2vec (Classifier Chain)
 -------------------------------------------------
-# Classifier: <class 'sklearn.naive_bayes.MultinomialNB'>
-Binary Relevance Precision:  0.017
-Binary Relevance Recall:  0.005
-Binary Relevance F1-score: 0.044
-Binary Relevance Hamming Loss: 0.017
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+ClassifierChain Precision:  0.519
+ClassifierChain Recall:  0.272
+ClassifierChain F1-score: 0.319
+ClassifierChain Hamming Loss: 0.032
 
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+ClassifierChain Precision:  0.315
+ClassifierChain Recall:  0.293
+ClassifierChain F1-score: 0.237
+ClassifierChain Hamming Loss: 0.051
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+ClassifierChain Precision:  0.301
+ClassifierChain Recall:  0.252
+ClassifierChain F1-score: 0.232
+ClassifierChain Hamming Loss: 0.038
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+ClassifierChain Precision:  0.464
+ClassifierChain Recall:  0.322
+ClassifierChain F1-score: 0.364
+ClassifierChain Hamming Loss: 0.037
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+ClassifierChain Precision:  0.382
+ClassifierChain Recall:  0.261
+ClassifierChain F1-score: 0.265
+ClassifierChain Hamming Loss: 0.041
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+ClassifierChain Precision:  0.237
+ClassifierChain Recall:  0.206
+ClassifierChain F1-score: 0.173
+ClassifierChain Hamming Loss: 0.054
+
+
+-------------------------------------------------
+Multiple Baseline Model-word2vec (Label Powerset)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Label Powerset Precision:  0.463
+Label Powerset Recall:  0.352
+Label Powerset F1-score: 0.352
+Label Powerset Hamming Loss: 0.039
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Label Powerset Precision:  0.167
+Label Powerset Recall:  0.151
+Label Powerset F1-score: 0.107
+Label Powerset Hamming Loss: 0.091
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+Label Powerset Precision:  0.37
+Label Powerset Recall:  0.333
+Label Powerset F1-score: 0.324
+Label Powerset Hamming Loss: 0.041
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Label Powerset Precision:  0.306
+Label Powerset Recall:  0.135
+Label Powerset F1-score: 0.149
+Label Powerset Hamming Loss: 0.054
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Label Powerset Precision:  0.432
+Label Powerset Recall:  0.383
+Label Powerset F1-score: 0.391
+Label Powerset Hamming Loss: 0.041
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+Label Powerset Precision:  0.305
+Label Powerset Recall:  0.264
+Label Powerset F1-score: 0.243
+Label Powerset Hamming Loss: 0.055
+
+
+-------------------------------------------------
+Multiple Baseline Model-tfidf (Binary Relevance)
+-------------------------------------------------
 # Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
 Binary Relevance Precision:  0.201
 Binary Relevance Recall:  0.044
@@ -90,7 +167,7 @@ Binary Relevance Hamming Loss: 0.014
 
 
 -------------------------------------------------
-Baseline Model tf-idf
+Baseline Model tf-idf (RandomForest)
 -------------------------------------------------
 # Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
 Precision:  0.59
@@ -100,7 +177,7 @@ Hamming Loss: 0.031
 
 
 -------------------------------------------------
-Baseline Model Word2vec
+Baseline Model Word2vec (RandomForest)
 -------------------------------------------------
 # Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
 Precision: 0.524
@@ -153,6 +230,13 @@ loss: 0.29696816205978394
 precision: 0.3586800694465637
 recall: 0.6983240246772766
 c_f1: 0.47736337780952454
+
+optuna: Trial 22 finished with value: 0.5630239248275757 and parameters: {'n_layers': 2, 'dropout': 0.057091867380322646,
+'filters': 38, 'kernel_sizes': 4, 'strides': 1,
+'filters0': 221, 'kernel_sizes0': 3, 'strides0': 2, 'dropout0': 0.3474126836787301,
+'filters1': 239, 'kernel_sizes1': 3, 'strides1': 1, 'dropout1': 0.0001691711045728704,
+'learning_rate': 0.0009895651135503852, 'size': 8}.
+
 
 
 -------------------------------------------------

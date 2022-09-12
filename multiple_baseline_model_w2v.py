@@ -36,6 +36,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import NearestNeighbors
 from skmultilearn.problem_transform import BinaryRelevance, LabelPowerset, ClassifierChain
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 # Evaluation
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix, hamming_loss
@@ -49,9 +50,11 @@ dataset_file_path = 'top_40_labels_dataset.json'
 classifiers = [
     RandomForestClassifier(n_estimators=300, min_samples_split=2, min_samples_leaf=1, max_depth=16, max_features='auto'),
     LinearSVC(C=150, tol=0.001),
-    SVC(C=20, tol=0.003),
+    SVC(C=20, tol=0.001),
     AdaBoostClassifier(n_estimators=200, learning_rate=0.1),
-    LogisticRegression(tol=0.01, C=200)
+    LogisticRegression(tol=0.01, C=200),
+    SGDClassifier(alpha=0.0001, max_iter=1000, tol=0.001, power_t=0.5, validation_fraction=0.1),
+    KNeighborsClassifier(n_neighbors=3)
 ]
 
 for classifier in classifiers:
@@ -147,9 +150,8 @@ for classifier in classifiers:
 
     # ----- Multi-label Classification with Binary Relevance  -----
     # each target variable(y1,y2,...) is treated independently and reduced to n classification problems
-    # parameters = {'kernel': ('linear', 'rbf'), 'C': [1, 10]}
     start = time.time()
-    wrapper_classifier = BinaryRelevance(
+    wrapper_classifier = LabelPowerset(
         classifier=classifier,
         require_dense=[False, True])
 

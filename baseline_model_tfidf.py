@@ -86,6 +86,9 @@ clean_data = list(map(lambda text: preprocess_texts(text), X))
 mlb = MultiLabelBinarizer()
 y_mlb = mlb.fit_transform(y)
 # print(mlb.classes_[1000:1500])
+# print(y_mlb[324])
+# print(y_mlb[14])
+
 
 # split the data set into training and testing
 X_train, X_test, y_train, y_test = train_test_split(clean_data, y_mlb, test_size=0.3, random_state=42)
