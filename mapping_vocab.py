@@ -70,7 +70,7 @@ def get_labels(predicted_labels):
     # create a temporary list and sorts the probabilities in descending order with the label number.
     sort_predicted_labels = sorted([(i, pred_prob) for i, pred_prob in enumerate(list(predicted_labels))],
                                    key=lambda x: x[1], reverse=True)
-    # a list with the predicted probabilities above the threshold of 0.45
+    # a list with the predicted probabilities above the threshold of 0.5
     label_list = [prob for prob in sort_predicted_labels if prob[1] >= 0.5]
     # list of the the original text labels
     labels = [label_class[1] for label in label_list[:8] for label_class in mlb if label[0] == label_class[0]]
