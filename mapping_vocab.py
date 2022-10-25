@@ -114,7 +114,6 @@ print(single_data)
 # pred_labels = single_data[0]['predicted_labels']
 
 
-exit() ###########################################
 # multiple policy_text_predictions
 def multi_predicted_data(model, text_values):
     predicted_data = []
