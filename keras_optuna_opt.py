@@ -304,11 +304,11 @@ def objective(trial):
                                restore_best_weights=True)
 
     # compile model and get best learning rate
-    learning_rate = keras.optimizers.Adam(learning_rate=trial.suggest_float('learning_rate', 1e-5, 1e-3, log=True))
+    learning_rate = keras.optimizers.Adam(learning_rate=trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True))
     opt_model.compile(loss='binary_crossentropy', metrics=[Precision(), Recall(), c_f1], optimizer=learning_rate)
 
     # fit the model and calculate the best batch size
-    opt_histroy = opt_model.fit(X_train, y_train_mlb, validation_data=(X_test, y_test_mlb), epochs=50, callbacks=[rdc_lr, early_stop],
+    opt_histroy = opt_model.fit(X_train, y_train_mlb, validation_data=(X_test, y_test_mlb), epochs=100, callbacks=[rdc_lr, early_stop],
                                 verbose=0, batch_size=trial.suggest_int('size', 8, 128))
 
     val_loss = min(opt_histroy.history['val_loss'])
@@ -322,7 +322,7 @@ def objective(trial):
 # create a study for optimization
 # study = optuna.create_study(directions=['maximize', 'maximize'])
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=30, timeout=None)
+study.optimize(objective, n_trials=60, timeout=None)
 
 
 def multiple_metric_stats(study):

@@ -5,6 +5,8 @@ import string
 import time
 import os
 import numpy as np
+import pickle
+from keras.models import load_model
 
 # Preprocessing
 from nltk.corpus import stopwords
@@ -34,6 +36,7 @@ from sklearn.model_selection import KFold, StratifiedKFold
 from keras.metrics import Precision, Recall
 from keras import backend as K
 from sklearn.metrics import average_precision_score
+import tensorflow_addons as tfa
 
 # plot
 from sklearn.metrics import precision_recall_curve
@@ -50,8 +53,6 @@ from keras_tuner import RandomSearch
 
 
 dataset_file_path = 'top_40_labels_dataset.json'
-with open(dataset_file_path) as fp:
-    dataset_json = json.load(fp)
 
 def create_x_y():
 
@@ -72,7 +73,6 @@ def create_x_y():
 
 # create x and y
 X, y = create_x_y()
-
 
 # ----- Preprocessing -----
 def preprocess_text(text):
@@ -142,7 +142,12 @@ maxlen = 215 # maximum length of each policy text
 embed_dim = 300
 
 # pad the sequence of policy text
-ptext_pad = pad_sequences(encoded_ptext, maxlen=maxlen, padding='post')
+def pad_text(text):
+    padding = pad_sequences(text, maxlen=maxlen, padding='post')
+    return padding
+
+
+padded_text = pad_text(encoded_ptext)
 
 # creating the embedding matrix
 embedding_matrix = np.zeros(shape=(vocab_size, embed_dim))
@@ -163,7 +168,7 @@ for word, i in tokenizer.word_index.items():
 print(f'converted words {hits} ({misses} missed words)')
 
 # split the dataset into training and testing
-X_train, X_test, y_train, y_test = train_test_split(ptext_pad, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(padded_text, y, test_size=0.2, random_state=42)
 
 # ------------ binarize the multiple labels ------------
 mlb = MultiLabelBinarizer()
@@ -187,23 +192,20 @@ for index, label in enumerate(label_classes):
 
 
 # --- custom metrics ---
-def c_recall(y_test, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_test * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_test, 0, 1)))
-    recall = true_positives / (possible_positives + K.epsilon())
-    return recall
+def get_f1(y_true, y_pred):
+    def get_recall(y_true, y_pred):
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+        recall = true_positives / (possible_positives + K.epsilon())
+        return recall
 
-
-def c_precision(y_test, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_test * y_pred, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
-    return precision
-
-
-def c_f1(y_test, y_pred):
-    precision = c_precision(y_test, y_pred)
-    recall = c_recall(y_test, y_pred)
+    def get_precision(y_true, y_pred):
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+        precision = true_positives / (predicted_positives + K.epsilon())
+        return precision
+    precision = get_precision(y_true, y_pred)
+    recall = get_recall(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
@@ -231,6 +233,34 @@ def build_cnn_model():
     return model
 
 
+def train_model(epoch=30, batch_size=16, lr=0.001):
+    t_model = build_cnn_model()
+    t_model.summary()
+
+    opt = keras.optimizers.Adam(learning_rate=lr)
+    t_model.compile(loss='binary_crossentropy', optimizer=opt,
+                  metrics=[keras.metrics.Precision(), keras.metrics.Recall(), get_f1])
+
+    # fit the model
+    history = t_model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
+
+    end = time.time()
+    process = round(end - start, 2)
+    print(f'training time taken: {process} seconds')
+
+    # display scores
+    score = t_model.evaluate(X_test, y_test_mlb)
+    print(f'{t_model.metrics_names[0]}: {score[0]}')
+    print(f'{t_model.metrics_names[1]}: {score[1]}')
+    print(f'{t_model.metrics_names[2]}: {score[2]}')
+    # print(f'{model.metrics_names[3]}: {score[3]}')
+
+    return model
+
+# model = build_cnn_model()
+# model = train_model(model) # another way by putting model as parameter
+# train_model()
+
 # params
 start = time.time()
 epoch = 30
@@ -244,7 +274,9 @@ model = build_cnn_model()
 model.summary()
 
 # compile the model
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), c_f1])
+# tfa.metrics.F1Score(36, threshold=0.5)
+# cf1
+model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall()])
 
 # fit the model
 history = model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
@@ -258,10 +290,42 @@ score = model.evaluate(X_test, y_test_mlb)
 print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
-print(f'{model.metrics_names[3]}: {score[3]}')
+# print(f'{model.metrics_names[3]}: {score[3]}')
+
+######## Save model and tokenizer ##############
+# model.save('cnn_model.h5')
+# print('saved model to disk')
+#
+# with open('tokenizer.pickle', 'wb') as handle:
+#     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# print('saved keras tokenizer')
+
+
+############## Test Model #################
+# load the model
+loaded_model = load_model('cnn_model.h5')
+
+# load tokenizer
+with open('tokenizer.pickle', 'rb') as handle:
+    loaded_tokenizer = pickle.load(handle)
+
+# predict a segment text
+txt = X[1]
+
+seq = loaded_tokenizer.texts_to_sequences([txt])
+
+padded = pad_sequences(seq, maxlen=maxlen)
+
+pred = loaded_model.predict(padded)
+
+print(pred)
+
+
+
+
+
 
 exit()
-
 ################## K-fold ####################
 def kfold_val():
     cross_val = KFold(n_splits=5, shuffle=True, random_state=42)

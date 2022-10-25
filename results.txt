@@ -49,8 +49,16 @@ Binary Relevance F1-score: 0.311
 Binary Relevance Hamming Loss: 0.034
 
 Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+Binary Relevance Precision:  0.315
+Binary Relevance Recall:  0.269
+Binary Relevance F1-score: 0.235
+Binary Relevance Hamming Loss: 0.064
 
-
+Classifier: <class 'sklearn.neighbors._classification.KNeighborsClassifier'>
+Binary Relevance Precision:  0.419
+Binary Relevance Recall:  0.336
+Binary Relevance F1-score: 0.347
+Binary Relevance Hamming Loss: 0.042
 
 -------------------------------------------------
 Multiple Baseline Model-word2vec (Classifier Chain)
@@ -90,6 +98,12 @@ ClassifierChain Precision:  0.237
 ClassifierChain Recall:  0.206
 ClassifierChain F1-score: 0.173
 ClassifierChain Hamming Loss: 0.054
+
+Classifier: <class 'sklearn.neighbors._classification.KNeighborsClassifier'>
+Binary Relevance Precision:  0.288
+Binary Relevance Recall:  0.169
+Binary Relevance F1-score: 0.265
+Binary Relevance Hamming Loss: 0.017
 
 
 -------------------------------------------------
@@ -237,10 +251,15 @@ optuna: Trial 22 finished with value: 0.5630239248275757 and parameters: {'n_lay
 'filters1': 239, 'kernel_sizes1': 3, 'strides1': 1, 'dropout1': 0.0001691711045728704,
 'learning_rate': 0.0009895651135503852, 'size': 8}.
 
+-------------------------------------------------
+Shallow Model
+-------------------------------------------------
+best f1 score:
+Trial 33 finished with value: 0.4393022060394287 and parameters: {'n_layers': 2, 'dropout': 0.18856839437923495, 'n_units_l0': 393, 'dropout0': 0.5016000407888777, 'n_units_l1': 331, 'dropout1': 0.5582626952033339, 'learning_rate': 0.0002583387933114043, 'size': 42}.
 
 
 -------------------------------------------------
-Bidirectional-LSTM
+Bidirectional-LSTM or LSTM-CNN Model
 -------------------------------------------------
 
 

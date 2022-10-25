@@ -2,7 +2,7 @@ import os.path
 import json
 
 # load the label dataset
-label_dataset_file_path = 'collected_labels2.json'
+label_dataset_file_path = 'collected_labels.json'
 
 with open(label_dataset_file_path) as f:
   label_dataset = json.load(f)

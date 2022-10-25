@@ -20,9 +20,11 @@ from sklearn.utils import compute_class_weight
 import tensorflow as tf
 import tensorflow.python.keras.optimizer_v1
 from tensorflow import keras
+from keras.models import Model
 from keras.layers import Dense, Activation, Embedding, GlobalMaxPool1D, \
-    Dropout, Conv1D, LSTM, Flatten, BatchNormalization, SimpleRNN, GRU, Bidirectional, GlobalAveragePooling1D
+    Dropout, Conv1D, LSTM, Flatten, BatchNormalization, SimpleRNN, GRU, Bidirectional, GlobalAveragePooling1D, SpatialDropout1D
 from keras.models import Sequential
+from keras.optimizers import RMSprop
 from keras import Input
 from tensorflow.python.keras.optimizer_v1 import Adam
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau
@@ -199,30 +201,55 @@ def c_f1(y_test, y_pred):
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
+def f1_score(y_true, y_logit):
+    '''
+    Calculate F1 score
+    y_true: true value
+    y_logit: predicted value
+    '''
+    true_positives = K.sum(K.round(K.clip(y_true * y_logit, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+    predicted_positives = K.sum(K.round(K.clip(y_logit, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return (2 * precision * recall) / (precision + recall + K.epsilon())
+
+
 # ################### build lstm model ###################
+def lstm_cnn_model():
+    model = Sequential()
+    model.add(Embedding(vocab_size, embed_dim, weights=[embedding_matrix], trainable=False))
+    model.add(SpatialDropout1D(0.2))
+    model.add(Conv1D(64, 3, padding='valid', activation='relu'))
+    model.add(Bidirectional(LSTM(128, return_sequences=True, dropout=0.1, recurrent_dropout=0.1)))
+    model.add(GlobalMaxPool1D())
+    model.add(Dense(128, activation='relu'))
+
+    model.add(Flatten())
+    model.add(Dense(36))
+    model.add(Activation('sigmoid'))
+
+    return model
+
+
 def lstm_model():
     model = Sequential()
     model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix], trainable=False))
-    model.add(Dropout(0.5))
 
-    model.add(Bidirectional(LSTM(256,
-                                 recurrent_dropout=0.1,
-                                 dropout=0.1,
-                                 return_sequences=True)))
-    # model.add(Conv1D(64, kernel_size=3,
-    #            padding="valid"))
-    #
-    # model.add(GlobalMaxPool1D())
-    model.add(Flatten())
+    # model.add(Bidirectional(LSTM(128,
+    #                              recurrent_dropout=0.1,
+    #                              dropout=0.1,
+    #                              return_sequences=True)))
+    model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.2))
+    # model.add(Flatten())
 
     model.add(Dense(36))
-
     model.add(Activation('sigmoid'))
 
     return model
 
 start = time.time()
-epoch = 30
+epoch = 5
 batch_size = 16
 lr = 0.001
 opt = keras.optimizers.Adam(learning_rate=lr)
@@ -244,6 +271,7 @@ print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
 print(f'{model.metrics_names[3]}: {score[3]}')
+
 
 
 exit()

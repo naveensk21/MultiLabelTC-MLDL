@@ -113,7 +113,7 @@ words = set(vocab)
 X_train_vect = np.array([np.array([w2v_model.wv[i] for i in lst if i in words])for lst in X_train])
 X_test_vect = np.array([np.array([w2v_model.wv[i] for i in lst if i in words]) for lst in X_test])
 
-# check the length of the sentence = sentence vector
+# check the length of the sentence = sentence vector (to prevent error due to having mismatch length between the vector and sentence)
 # for i, v in enumerate(X_train_vect):
 #     print(len(X_train_tokenized[i]), len(v))
 
@@ -142,10 +142,10 @@ for vector in X_test_vect:
 np.random.seed(42)
 start = time.time()
 base_classifier = BinaryRelevance(
-    # classifier=RandomForestClassifier(n_estimators=400, min_samples_split=2, min_samples_leaf=2, max_features='auto',
-    #                                   max_depth=16, random_state=42),
+    classifier=RandomForestClassifier(n_estimators=400, min_samples_split=2, min_samples_leaf=2, max_features='auto',
+                                      max_depth=16, random_state=42),
     # classifier=LogisticRegression(C=520, tol=0.01),
-    classifier=LinearSVC(C=30, tol=0.1),
+    # classifier=LinearSVC(C=30, tol=0.1),
     require_dense=[True, True])
 
 # # fit the model

@@ -7,7 +7,6 @@ clean_dataset_file_path = 'clean_combined_data.json'
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
-
 invalid_labels = {'The text introduces the policy, a section, or a group of practices, but it does not mention a specific practice.',
                'The text does not fit into our label scheme.',
                'The text describes a specific data practice that is not covered by our label scheme.',

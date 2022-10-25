@@ -1,6 +1,5 @@
 import json
 
-
 # data without 'bad' labels
 clean_dataset_file_path = 'clean_combined_data.json'
 

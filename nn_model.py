@@ -218,7 +218,7 @@ def shallow_model():
 
 # params
 start = time.time()
-epoch = 30
+epoch = 3
 # 19-0.01, 17-0.11(high recall),
 batch_size = 89
 lr = 0.0005818750047791371
@@ -254,16 +254,18 @@ def objective(trial):
     x_train_cv, x_test_cv, y_train_cv, y_test_cv = train_test_split(X_train, y_train_mlb, train_size=0.8,
                                                                     test_size=0.2, random_state=42)
     # best number of hidden layers
-    n_layers = trial.suggest_int('n_layers', 1, 4)
+    n_layers = trial.suggest_int('n_layers', 1, 5)
 
     # create trial optuna model
     opt_model = keras.Sequential()
 
     opt_model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
 
+    opt_model.add(Dropout(rate=trial.suggest_float(f'dropout', 0.0, 0.7)))
+
     for i in range(n_layers):
         # best number of hidden nodes
-        num_hidden_nds = trial.suggest_int(f'n_units_l{i}', 16, 256, log=True)
+        num_hidden_nds = trial.suggest_int(f'n_units_l{i}', 8, 400, log=True)
 
         # best activation function
         # opt_model.add(keras.layers.Dense(num_hidden_nds,
@@ -280,14 +282,14 @@ def objective(trial):
     opt_model.add(keras.layers.Dense(36, activation='sigmoid'))
 
     # reduce learning rate if it shows no signs of improvement
-    rdc_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=1, min_lr=1e-05, verbose=0)
+    rdc_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, min_lr=1e-05, verbose=0)
 
     # early stop to stop if the model stops improving
     early_stop = EarlyStopping(monitor="val_loss", min_delta=0, patience=5, verbose=0, mode="auto", baseline=None,
     restore_best_weights=True)
 
     # compile model and get best learning rate
-    learning_rate = keras.optimizers.Adam(learning_rate=trial.suggest_float('learning_rate',1e-5, 1e-3, log=True))
+    learning_rate = keras.optimizers.Adam(learning_rate=trial.suggest_float('learning_rate',1e-5, 1e-2, log=True))
     opt_model.compile(loss='binary_crossentropy', metrics=[Precision(), Recall(), c_f1], optimizer=learning_rate)
 
     # fit the model and calculate the best batch size
@@ -306,7 +308,7 @@ def objective(trial):
 
 # create study to invoke optimization
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=50, timeout=1500)
+study.optimize(objective, n_trials=80, timeout=None)
 # pruned_trials = study.get_trials(deepcopy=False, states=[TrialState.PRUNED])
 
 
