@@ -91,18 +91,18 @@ def get_dgpr_vocab(predicted_label):
 
 # single policy_text_predictions
 def single_predicted_data(text_string):
-    single_predicted_data = []
+    output_data = []
 
     seq = loaded_tokenizer.texts_to_sequences([text_string])
     padded_text = pad_sequences(seq, maxlen=max_len, padding='post')
 
     pred = loaded_model.predict(padded_text)
 
-    single_predicted_data.append({'policy_text': loaded_tokenizer.sequences_to_texts(seq),
+    output_data.append({'policy_text': loaded_tokenizer.sequences_to_texts(seq),
                                  'predicted_labels': get_labels(pred.ravel().tolist()),
                                   'GDPR_vocab': get_dgpr_vocab(get_labels(pred.ravel().tolist()))})
 
-    return single_predicted_data
+    return output_data
 
 
 single_data = single_predicted_data('<strong> Legal Compliance, Business Transfers and Other Disclosures. </strong> <br> <br> Notwithstanding anything to the contrary stated herein or within our Services, we may occasionally release information about users of our Services when we deem such release appropriate to comply with law, respond to compulsory process or law enforcement requests, enforce our Visitor Agreement, or protect the rights, property or safety of users of our Services, the public, Meredith Corporation, our affiliates, or any third party. Over time, we may reorganize or transfer various assets and lines of business. Notwithstanding anything to the contrary stated herein or on our Services, we reserve the right to disclose or transfer any information we collect to third parties in connection with any proposed or actual purchase, sale, lease, merger, foreclosure, liquidation, amalgamation or any other type of acquisition, disposal, transfer, conveyance or financing of all or any portion of Meredith or our affiliates. <br> <br>')
@@ -110,31 +110,28 @@ single_data = single_predicted_data('<strong> Legal Compliance, Business Transfe
 # display the associated set of labels for that policy text
 print(single_data)
 
-# p_text = single_data[0]['policy_text']
-# pred_labels = single_data[0]['predicted_labels']
-
 
 # multiple policy_text_predictions
 def multi_predicted_data(model, text_values):
-    predicted_data = []
+    output_data = []
     pred = model.predict(text_values)
 
     for i, datapoint in enumerate(text_values):
-        predicted_data.append({'policy_text': remove_tags(X[i]),
+        output_data.append({'policy_text': remove_tags(X[i]),
                               'predicted_labels': get_labels(pred[i].tolist()),
-                              'GDPR_vocab': []})
+                              'GDPR_vocab': get_dgpr_vocab(get_labels(pred[i].tolist()))})
 
-    return predicted_data
+    return output_data
 
 
-# predicted_data = multi_predicted_data(loaded_model, padded)
+predicted_data = multi_predicted_data(loaded_model, padded)
 #
 # print(predicted_data)
 
 
 # collect the label data into a json
-# with open('pred_mapped_data2.json', 'w') as fp:
-#     json.dump(predicted_data, fp)
+with open('pred_mapped_data2.json', 'w') as fp:
+    json.dump(predicted_data, fp)
 
 
 

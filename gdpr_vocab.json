@@ -15,7 +15,7 @@
   "Data transfer between user and website/app is encrypted, e.g., SSL, TLS, HTTPS." : "Integrity and Confidentiality",
   "The company/organization has a privacy or security program/organization in place addressing, for example, how to protect data against unauthorized access or privacy training for employees." : "Integrity and Confidentiality",
   "The policy makes a statement about how data from European users is treated (e.g., Safe Harbor provisions).": "Lawfulness, Fairness and Transparency",
-  "The policy makes a statement about how data from children is treated" : "Lawfulness, Fairness and Transparency",
+  "The policy makes a statement about how data from children is treated." : "Lawfulness, Fairness and Transparency",
   "The policy makes specific provisions for international audiences, non-US citizens, or non-European citizens (e.g., about international data transfer)." : "Lawfulness, Fairness and Transparency",
   "The site collects your IP address or device IDs for an unspecified purpose. Collection happens when you implicitly provide information on the website." : "Data Minimization, Purpose Limitation, Lawfulness, Fairness and Transparency",
   "The site collects your cookies or tracking elements for analytics or research. Collection happens on the website." : "Data Minimization, Purpose Limitation, Lawfulness, Fairness and Transparency",
