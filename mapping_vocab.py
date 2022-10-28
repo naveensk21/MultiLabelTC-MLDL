@@ -8,19 +8,17 @@ import re
 
 # top labels file path
 dataset_file_path = 'top_40_labels_dataset.json'
+with open(dataset_file_path) as fp:
+    dataset_json = json.load(fp)
 
 # gppr vocab path
 gdpr_dataset_path = 'gdpr_vocab.json'
-
 with open(gdpr_dataset_path) as fp:
     gdpr_vocab = json.load(fp)
 
 
 # function to create x and y
 def create_x_y():
-
-    with open(dataset_file_path) as fp:
-        dataset_json = json.load(fp)
 
     x = [] # policy texts
     y = [] # labels
@@ -42,7 +40,6 @@ mlb = MultiLabelBinarizer()
 y_mlb = mlb.fit_transform(y)
 label_classes = mlb.classes_
 
-
 # load the model
 loaded_model = load_model('cnn_model.h5')
 
@@ -63,8 +60,8 @@ def remove_tags(text):
     return text
 
 
-# tranform the predicted labels to original label string
-def get_labels(predicted_labels):
+# transform the predicted labels to original label string
+def get_pred_labels(predicted_labels):
     # gets all the 36 label
     mlb = [(i, label) for i, label in enumerate(label_classes)]
     # create a temporary list and sorts the probabilities in descending order with the label number.
@@ -88,6 +85,15 @@ def get_dgpr_vocab(predicted_label):
 
     return list(dict.fromkeys(vocab))
 
+# function to get the original labels
+def get_orig_labels(policy_text):
+    labels = []
+    for datapoint in dataset_json:
+        if policy_text in datapoint['policy_text']:
+            label = datapoint['labels']
+            labels.append(label)
+    return labels
+
 
 # single policy_text_predictions
 def single_predicted_data(text_string):
@@ -99,8 +105,9 @@ def single_predicted_data(text_string):
     pred = loaded_model.predict(padded_text)
 
     output_data.append({'policy_text': loaded_tokenizer.sequences_to_texts(seq),
-                                 'predicted_labels': get_labels(pred.ravel().tolist()),
-                                  'GDPR_vocab': get_dgpr_vocab(get_labels(pred.ravel().tolist()))})
+                        'Original_labels': get_orig_labels(text_string),
+                        'predicted_labels': get_pred_labels(pred.ravel().tolist()),
+                        'GDPR_vocab': get_dgpr_vocab(get_pred_labels(pred.ravel().tolist()))})
 
     return output_data
 
@@ -110,7 +117,7 @@ single_data = single_predicted_data('<strong> Legal Compliance, Business Transfe
 # display the associated set of labels for that policy text
 print(single_data)
 
-
+exit()
 # multiple policy_text_predictions
 def multi_predicted_data(model, text_values):
     output_data = []
@@ -118,8 +125,8 @@ def multi_predicted_data(model, text_values):
 
     for i, datapoint in enumerate(text_values):
         output_data.append({'policy_text': remove_tags(X[i]),
-                              'predicted_labels': get_labels(pred[i].tolist()),
-                              'GDPR_vocab': get_dgpr_vocab(get_labels(pred[i].tolist()))})
+                              'predicted_labels': get_pred_labels(pred[i].tolist()),
+                              'GDPR_vocab': get_dgpr_vocab(get_pred_labels(pred[i].tolist()))})
 
     return output_data
 

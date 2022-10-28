@@ -31,6 +31,7 @@ from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.pipeline import Pipeline
 from skmultilearn.problem_transform import BinaryRelevance, LabelPowerset, ClassifierChain
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.utils import class_weight
 
 # Evaluation
 import sklearn.metrics as metrics

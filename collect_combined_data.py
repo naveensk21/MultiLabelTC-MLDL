@@ -1,7 +1,7 @@
 import json
 
 # load labelled data and policy text data
-with open('collected_labels2.json') as fp:
+with open('collected_labels.json') as fp:
     labelled_data = json.load(fp)
 
 with open('collected_policy_text.json') as fp:

@@ -19,7 +19,7 @@ top_labels_dataset_file_path = f'top_{store_top_x}_labels_dataset.json'
 with open(label_support_file_path) as fp:
     label_counters: Dict[str, int] = json.load(fp)
 
-# collects and stores the top labels (currently set at 20)
+# collects and stores the top labels (currently set at 40)
 top_labels = set()
 for label, counter in label_counters.items():
     if counter >= store_top_x:
