@@ -31,6 +31,7 @@ from keras import Input
 from tensorflow.python.keras.optimizer_v1 import Adam
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau
 from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.utils import compute_sample_weight
 
 # metrics
 from keras.metrics import Precision, Recall
@@ -51,13 +52,14 @@ import keras_tuner
 from keras import layers
 from keras_tuner import RandomSearch
 
-
+# load the top labels
 dataset_file_path = 'top_40_labels_dataset.json'
 
-def create_x_y():
+with open(dataset_file_path) as fp:
+    dataset_json = json.load(fp)
 
-    with open(dataset_file_path) as fp:
-        dataset_json = json.load(fp)
+
+def create_x_y():
 
     x = [] # policy texts
     y = [] # labels
@@ -176,6 +178,9 @@ y_train_mlb = mlb.fit_transform(y_train)
 y_test_mlb = mlb.transform(y_test)
 label_classes = mlb.classes_
 
+print(label_classes)
+
+exit()
 # create dictionary counters with the key as the label name and the value as the total number of labels
 counters = {}
 for labels in y:
@@ -185,11 +190,12 @@ for labels in y:
         else:
             counters[label] = 1
 
-# calculates class weights for label due to label imbalance
+# calculates class weights for each label due to label imbalance
 class_weights = {}
 for index, label in enumerate(label_classes):
-    class_weights[index] = len(y) / counters.get(label)
+    class_weights[index] = len(y) / (counters.get(label))
 
+comp_weight = compute_sample_weight(class_weight='balanced', y=y_train_mlb)
 
 # --- custom metrics ---
 def get_f1(y_true, y_pred):
@@ -276,7 +282,7 @@ model.summary()
 # compile the model
 # tfa.metrics.F1Score(36, threshold=0.5)
 # cf1
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall()])
+model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), get_f1])
 
 # fit the model
 history = model.fit(X_train, y_train_mlb, epochs=epoch, batch_size=batch_size, validation_split=0.1, shuffle=True)
@@ -290,7 +296,7 @@ score = model.evaluate(X_test, y_test_mlb)
 print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
-# print(f'{model.metrics_names[3]}: {score[3]}')
+print(f'{model.metrics_names[3]}: {score[3]}')
 
 ######## Save model and tokenizer ##############
 # model.save('cnn_model.h5')
@@ -300,7 +306,7 @@ print(f'{model.metrics_names[2]}: {score[2]}')
 #     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 # print('saved keras tokenizer')
 
-
+exit()
 ############## Test Model #################
 # load the model
 loaded_model = load_model('cnn_model.h5')
@@ -358,7 +364,7 @@ def kfold_val():
                                    baseline=None,
                                    restore_best_weights=True)
 
-        model.compile(loss='binary_crossentropy', metrics=[Precision(), Recall(), c_f1], optimizer='adam')
+        model.compile(loss='binary_crossentropy', metrics=[Precision(), Recall(), get_f1], optimizer='adam')
 
         histroy = model.fit(x_train_val, y_train_val, validation_data=(x_test_val, y_test_val),
                             epochs=10,

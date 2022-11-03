@@ -75,15 +75,15 @@ def get_pred_labels(predicted_labels):
     return labels
 
 
-# get the gdpr principles
-def get_dgpr_vocab(predicted_label):
+# get dpv vocabulary to mapped to the labels
+def get_dpv_vocab(predicted_labels):
     vocab = []
-    for label in gdpr_vocab.keys():
-        if label in predicted_label:
-            gdpr = gdpr_vocab.get(label)
-            vocab.append(gdpr)
+    for vocabulary in gdpr_vocab.keys():
+        if vocabulary in " ".join(predicted_labels):
+            dpv = gdpr_vocab.get(vocabulary)
+            vocab.append(dpv)
+    return vocab
 
-    return list(dict.fromkeys(vocab))
 
 # function to get the original labels
 def get_orig_labels(policy_text):
@@ -105,19 +105,18 @@ def single_predicted_data(text_string):
     pred = loaded_model.predict(padded_text)
 
     output_data.append({'policy_text': loaded_tokenizer.sequences_to_texts(seq),
-                        'Original_labels': get_orig_labels(text_string),
                         'predicted_labels': get_pred_labels(pred.ravel().tolist()),
-                        'GDPR_vocab': get_dgpr_vocab(get_pred_labels(pred.ravel().tolist()))})
+                        'GDPR_vocab': get_dpv_vocab(get_pred_labels(pred.ravel().tolist()))})
 
     return output_data
 
 
-single_data = single_predicted_data('<strong> Legal Compliance, Business Transfers and Other Disclosures. </strong> <br> <br> Notwithstanding anything to the contrary stated herein or within our Services, we may occasionally release information about users of our Services when we deem such release appropriate to comply with law, respond to compulsory process or law enforcement requests, enforce our Visitor Agreement, or protect the rights, property or safety of users of our Services, the public, Meredith Corporation, our affiliates, or any third party. Over time, we may reorganize or transfer various assets and lines of business. Notwithstanding anything to the contrary stated herein or on our Services, we reserve the right to disclose or transfer any information we collect to third parties in connection with any proposed or actual purchase, sale, lease, merger, foreclosure, liquidation, amalgamation or any other type of acquisition, disposal, transfer, conveyance or financing of all or any portion of Meredith or our affiliates. <br> <br>')
+single_data = single_predicted_data("<strong> Email. </strong> <br> <br> You can opt-out from any Meredith email newsletter or commercial email list and prevent the collection of related email response information by our email service providers by using the unsubscribe link at the bottom of each message and/ or by visiting the Email Preferences page on our sites and updating your preferences. If you no longer want to receive third-party email offers that you requested through our Services, simply follow the advertiser's unsubscribe link or opt-out instructions that should be included in every commercial message you receive. <br> <br>")
 
 # display the associated set of labels for that policy text
 print(single_data)
 
-exit()
+
 # multiple policy_text_predictions
 def multi_predicted_data(model, text_values):
     output_data = []
@@ -126,7 +125,7 @@ def multi_predicted_data(model, text_values):
     for i, datapoint in enumerate(text_values):
         output_data.append({'policy_text': remove_tags(X[i]),
                               'predicted_labels': get_pred_labels(pred[i].tolist()),
-                              'GDPR_vocab': get_dgpr_vocab(get_pred_labels(pred[i].tolist()))})
+                              'GDPR_vocab': get_dpv_vocab(get_pred_labels(pred[i].tolist()))})
 
     return output_data
 

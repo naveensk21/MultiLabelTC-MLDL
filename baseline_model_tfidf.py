@@ -32,6 +32,8 @@ from sklearn.pipeline import Pipeline
 from skmultilearn.problem_transform import BinaryRelevance, LabelPowerset, ClassifierChain
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils import class_weight
+from sklearn.neighbors import KNeighborsClassifier
+
 
 # Evaluation
 import sklearn.metrics as metrics
@@ -84,24 +86,25 @@ def preprocess_texts(text):
 clean_data = list(map(lambda text: preprocess_texts(text), X))
 
 # Use MultilabelBinarizer to vectorize the labels
+
 mlb = MultiLabelBinarizer()
 y_mlb = mlb.fit_transform(y)
+n_classes = y_mlb.shape[1]
+
 # print(mlb.classes_[1000:1500])
 # print(y_mlb[324])
 # print(y_mlb[14])
 
 
 # split the data set into training and testing
-X_train, X_test, y_train, y_test = train_test_split(clean_data, y_mlb, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(clean_data, y_mlb, test_size=0.2, random_state=42)
 
 
 # ---- Feature Engineering ----
 # tfidf-vectorizer the policy text
-tfidf = TfidfVectorizer(analyzer='word', max_features=1000)
+tfidf = TfidfVectorizer(analyzer='word', max_features=10000)
 X_train_tfidf = tfidf.fit_transform(X_train)
 X_test_tfidf = tfidf.transform(X_test)
-
-# print(tfidf.vocabulary_)
 
 # shapes of x and y
 # print(X_train_tfidf.shape)
@@ -140,7 +143,25 @@ print('Recall: ', round(br_rec, 3))
 print('F1-score:', round(br_f1, 3))
 print('Hamming Loss:', round(br_hamm, 3))
 
+# plot preicision recall curve
+y_score = base_classifier.predict_proba(X_test_tfidf)
+
+precision = dict()
+recall = dict()
+for i in range(n_classes):
+    precision[i], recall[i], _ = precision_recall_curve(y_test.ravel()[:,i],
+                                                        y_score[:,i])
+    plt.plot(recall[i], precision[i], lw=2, label=f'class {i}')
+
+plt.xlabel("recall")
+plt.ylabel("precision")
+plt.legend(loc="best")
+plt.title("precision vs. recall curve")
+plt.show()
+
 exit()
+
+
 # ----- gridsearch ------
 # grid_param_lsvc = {
 #     'classifier': [BinaryRelevance()],
@@ -155,14 +176,21 @@ grid_param_rf = {
     'classifier__max_depth': [16, 18, 20, 30, 40, 50]
     }
 
+grid_param_knn = {
+    'classifier__n_neighbors': [3,5,7,9,11,13],
+    'classifier__leaf_size' : [20, 30, 40, 50],
+    'classifier__weights' : ['uniform', 'distance'],
+    'classifier__metric' : ['minkowski', 'euclidean', 'manhattan']
+}
+
 
 def grid_search(params):
-    clf = GridSearchCV(base_classifier, param_grid=params, scoring='f1_macro')
+    clf = GridSearchCV(base_classifier, param_grid=params, cv=3,  scoring='f1_macro')
     return clf
 
 
 def random_search(params):
-    clf = RandomizedSearchCV(estimator=base_classifier, param_distributions=params, cv=5, n_iter=50)
+    clf = RandomizedSearchCV(estimator=base_classifier, param_distributions=params, cv=5, n_iter=50, n_jobs=-1)
     return clf
 
 
@@ -188,6 +216,9 @@ print(clf.best_params_)
 
 
 
+# Precision:  0.489
+# Recall:  0.373
+# F1-score: 0.457
 
 
 
