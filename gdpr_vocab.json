@@ -38,7 +38,7 @@
   "collect": "Collect",
   "device": "Technology",
   "purpose": "Purpose",
-  "services and features" : "serviceProvision",
+  "service or feature" : "serviceProvision",
 
   "analytics": "ServiceUsageAnalytics",
   "Collection happens on the website": "DataSource",
