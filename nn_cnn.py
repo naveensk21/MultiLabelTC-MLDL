@@ -4,6 +4,8 @@ import re
 import string
 import time
 import os
+
+import gensim.models.phrases
 import numpy as np
 import pickle
 from keras.models import load_model
@@ -42,6 +44,8 @@ import tensorflow_addons as tfa
 # plot
 from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
+from matplotlib import pyplot
+from sklearn.decomposition import PCA
 
 # optuna
 import optuna
@@ -99,11 +103,12 @@ print('--preprocessing done--')
 
 
 # --------- build the word2vec model ---------
-# tokenize the the policy texts
+# tokenize the the policy texts (unigrams)
 tokenized_data = []
 for sentence in preprocessed_text:
     sentc_tokens = word_tokenize(sentence)
     tokenized_data.append(sentc_tokens)
+
 
 # title = re.sub('\D', '', dataset_file_path)
 # word2vec_model_file = 'word2vec_top'+ f'{title}' +'.model'
@@ -125,7 +130,7 @@ for word in vocab:
     word_vect_dict[word] = w2v_model.wv.get_vector(word)
 # print(f'key-value pair entries: {len(word_vect_dict)}')
 
-# encode the text and define parameters
+# encode the text and define parameters (tokenize the text)
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(preprocessed_text)
 
@@ -139,7 +144,7 @@ def get_max_len(encoded_text):
 
 
 vocab_size = len(tokenizer.word_index) + 1 # total vocabulary size
-encoded_ptext = tokenizer.texts_to_sequences(preprocessed_text) # encoded policy texts
+encoded_ptext = tokenizer.texts_to_sequences(preprocessed_text) # encoded policy texts -> create a sequence
 maxlen = 215 # maximum length of each policy text
 embed_dim = 300
 
@@ -168,6 +173,17 @@ for word, i in tokenizer.word_index.items():
         pass
 
 print(f'converted words {hits} ({misses} missed words)')
+print(" ")
+##############################Testing#############################################
+preprocess_text_len = preprocessed_text[3].split()
+print("from: ", preprocessed_text[3], f"| len: {len(preprocess_text_len)}")
+
+print("to: ", padded_text[3], f"| len: {len(padded_text[3])}")
+
+vocab_testing = tokenizer.word_index.get(preprocess_text_len[0])
+print("check: word -->", preprocess_text_len[0], f"in idx --> {vocab_testing} ")
+###########################################################################
+exit()
 
 # split the dataset into training and testing
 X_train, X_test, y_train, y_test = train_test_split(padded_text, y, test_size=0.2, random_state=42)
@@ -178,9 +194,7 @@ y_train_mlb = mlb.fit_transform(y_train)
 y_test_mlb = mlb.transform(y_test)
 label_classes = mlb.classes_
 
-print(label_classes)
 
-exit()
 # create dictionary counters with the key as the label name and the value as the total number of labels
 counters = {}
 for labels in y:
