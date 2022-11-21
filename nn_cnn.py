@@ -46,6 +46,11 @@ from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
 from matplotlib import pyplot
 from sklearn.decomposition import PCA
+from keras.utils.vis_utils import plot_model
+import graphviz
+import pydot
+
+
 
 # optuna
 import optuna
@@ -57,7 +62,7 @@ from keras import layers
 from keras_tuner import RandomSearch
 
 # load the top labels
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'top_10lb_popular_dataset.json'
 
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
@@ -85,6 +90,7 @@ def preprocess_text(text):
     text = text.lower()
     text = re.sub(re.compile('<.*?>'), '', text)
     text = text.translate(str.maketrans('', '', string.punctuation))
+    text = re.sub('\d+', '', text)
 
     word_tokens = text.split()
     le=WordNetLemmatizer()
@@ -92,6 +98,8 @@ def preprocess_text(text):
     word_tokens = [le.lemmatize(w) for w in word_tokens if not w in stop_words]
 
     cleaned_text = " ".join(word_tokens)
+    cleaned_text = re.sub(r"\b[a-zA-Z]\b", "", cleaned_text)
+    cleaned_text = " ".join(cleaned_text.split())
 
     return cleaned_text
 
@@ -104,35 +112,104 @@ print('--preprocessing done--')
 
 # --------- build the word2vec model ---------
 # tokenize the the policy texts (unigrams)
-tokenized_data = []
-for sentence in preprocessed_text:
-    sentc_tokens = word_tokenize(sentence)
-    tokenized_data.append(sentc_tokens)
+def create_tokens(sentence_list):
+    token_data = []
+    for sentence in sentence_list:
+        tokens = word_tokenize(sentence)
+        token_data.append(tokens)
+    return token_data
+
+
+tokenized_data = create_tokens(preprocessed_text)
+
+# tokenized_data = []
+# for sentence in preprocessed_text:
+#     tokens = word_tokenize(sentence)
+#     tokenized_data.append(tokens)
 
 
 # title = re.sub('\D', '', dataset_file_path)
 # word2vec_model_file = 'word2vec_top'+ f'{title}' +'.model'
 start = time.time()
-w2v_model = Word2Vec(sentences=tokenized_data, size=300, window=10, min_count=1)
+w2v_model = Word2Vec(sentences=tokenized_data, size=300, window=7, min_count=1)
 print("Time taken to train word2vec model: ", round(time.time()-start, 0), 'seconds')
 # w2v_model.save(word2vec_model_file)
 
 w2v_model.train(tokenized_data, epochs=10, total_examples=len(tokenized_data))
 
+
+def visualize_w2v():
+    vector = w2v_model[w2v_model.wv.vocab]
+    pca = PCA(n_components=2)
+    result = pca.fit_transform(vector)
+
+    plt.scatter(x=result[:, 0], y=result[:, 1])
+    words = list(w2v_model.wv.vocab)
+    for i, word in enumerate(words):
+        plt.annotate(word, size=3, xy=(result[i, 0], result[i, 1]))
+
+    plt.show()
+
+
 vocab = w2v_model.wv.vocab
 print("The total words : ", len(vocab))
+vocab = list(vocab.keys()) # list of words in the w2v model
 
-# create a dictionary with word and key as the embedding (used for creating embed matrix)
-vocab = list(vocab.keys())
-word_vect_dict = {}
 
-for word in vocab:
-    word_vect_dict[word] = w2v_model.wv.get_vector(word)
-# print(f'key-value pair entries: {len(word_vect_dict)}')
+# create a dictionary with word and key as the vectors (used for creating embed matrix)
+def create_word_vect_dict(vocab):
+    wv_dict = {}
+    for word in vocab:
+        wv_dict[word] = w2v_model.wv.get_vector(word)
+    return wv_dict
+    pass
+
+
+word_vect_dict = create_word_vect_dict(vocab)
 
 # encode the text and define parameters (tokenize the text)
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(preprocessed_text)
+
+vocab_size = len(tokenizer.word_index) + 1 # total vocabulary size
+encoded_ptext = tokenizer.texts_to_sequences(preprocessed_text) # encoded policy texts with mathematical index
+maxlen = 215 # maximum length of each policy text
+embed_dim = 300
+
+
+# creating the embedding matrix
+def get_embedding_matrix():
+    embed_matrix = np.zeros(shape=(vocab_size, embed_dim))
+    hits = 0
+    misses = 0
+
+    for word, i in tokenizer.word_index.items():
+        embed_vector = word_vect_dict.get(word)
+        try:
+            if embed_vector is not None:
+                embed_matrix[i] = embed_vector
+                hits += 1
+            else:
+                misses += 1
+        except:
+            pass
+
+    print(f'converted words {hits} ({misses} missed words)')
+    return embed_matrix
+
+
+embedding_matrix = get_embedding_matrix()
+
+
+# check how many embeddings are nonzeros
+def check_coverage(matrix):
+    nonzero = np.count_nonzero(np.count_nonzero(matrix, axis=1))
+    cal_nonzero = nonzero / vocab_size
+    return cal_nonzero
+
+
+coverage = check_coverage(embedding_matrix)
+
 
 # find the maximum length = 214
 def get_max_len(encoded_text):
@@ -143,11 +220,6 @@ def get_max_len(encoded_text):
     return max_len
 
 
-vocab_size = len(tokenizer.word_index) + 1 # total vocabulary size
-encoded_ptext = tokenizer.texts_to_sequences(preprocessed_text) # encoded policy texts -> create a sequence
-maxlen = 215 # maximum length of each policy text
-embed_dim = 300
-
 # pad the sequence of policy text
 def pad_text(text):
     padding = pad_sequences(text, maxlen=maxlen, padding='post')
@@ -156,34 +228,19 @@ def pad_text(text):
 
 padded_text = pad_text(encoded_ptext)
 
-# creating the embedding matrix
-embedding_matrix = np.zeros(shape=(vocab_size, embed_dim))
-hits = 0
-misses = 0
 
-for word, i in tokenizer.word_index.items():
-    embed_vector = word_vect_dict.get(word)
-    try:
-        if embed_vector is not None:
-            embedding_matrix[i] = embed_vector
-            hits += 1
-        else:
-            misses += 1
-    except:
-        pass
-
-print(f'converted words {hits} ({misses} missed words)')
-print(" ")
 ##############################Testing#############################################
-preprocess_text_len = preprocessed_text[3].split()
-print("from: ", preprocessed_text[3], f"| len: {len(preprocess_text_len)}")
+def test_token_pad():
+    preprocess_text_len = preprocessed_text[3].split()
+    print("from: ", preprocessed_text[3], f"| len: {len(preprocess_text_len)}")
+    print("from: ", preprocessed_text[5], f"| len: {len(preprocessed_text[5].split())}")
 
-print("to: ", padded_text[3], f"| len: {len(padded_text[3])}")
+    print("to: ", padded_text[3], f"| len: {len(padded_text[3])}")
 
-vocab_testing = tokenizer.word_index.get(preprocess_text_len[0])
-print("check: word -->", preprocess_text_len[0], f"in idx --> {vocab_testing} ")
+    vocab_testing = tokenizer.word_index.get(preprocess_text_len[0])
+    print("check: word -->", preprocess_text_len[0], f"in idx --> {vocab_testing} ")
 ###########################################################################
-exit()
+
 
 # split the dataset into training and testing
 X_train, X_test, y_train, y_test = train_test_split(padded_text, y, test_size=0.2, random_state=42)
@@ -193,7 +250,6 @@ mlb = MultiLabelBinarizer()
 y_train_mlb = mlb.fit_transform(y_train)
 y_test_mlb = mlb.transform(y_test)
 label_classes = mlb.classes_
-
 
 # create dictionary counters with the key as the label name and the value as the total number of labels
 counters = {}
@@ -210,6 +266,7 @@ for index, label in enumerate(label_classes):
     class_weights[index] = len(y) / (counters.get(label))
 
 comp_weight = compute_sample_weight(class_weight='balanced', y=y_train_mlb)
+
 
 # --- custom metrics ---
 def get_f1(y_true, y_pred):
@@ -235,20 +292,25 @@ def build_cnn_model():
 
     model = Sequential()
 
-    model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
+    model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix], trainable=True))
     model.add(Dropout(0.6))
+
     model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     model.add(Dropout(0.6))
-    model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
+    model.add(Conv1D(220, 4, padding='valid', activation='relu', strides=1))
 
     # model.add(Dropout(0.6))
     # model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
-    # model.add(Dropout(0.6))
-    # model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
-    model.add(GlobalMaxPool1D())
+    model.add(layers.GlobalMaxPool1D())
+
+    # model.add(layers.Dense(64, activation='relu'))
+    # model.add(layers.Dense(32, activation='relu'))
+
     model.add(Flatten())
-    model.add(Dense(n_classes))
-    model.add(Activation('sigmoid'))
+    model.add(Dense(n_classes, activation='sigmoid'))
+
+    # model.add(Dense(n_classes))
+    # model.add(Activation('sigmoid'))
 
     return model
 
@@ -283,7 +345,7 @@ def train_model(epoch=30, batch_size=16, lr=0.001):
 
 # params
 start = time.time()
-epoch = 30
+epoch = 50
 # 19-0.01, 17-0.11(high recall),
 batch_size = 16
 lr = 0.001
@@ -292,10 +354,9 @@ opt = keras.optimizers.Adam(learning_rate=lr)
 model = build_cnn_model()
 
 model.summary()
+# plot_model(model, to_file='cnn_model_plot.png', show_shapes=True, show_layer_names=True)
 
 # compile the model
-# tfa.metrics.F1Score(36, threshold=0.5)
-# cf1
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), get_f1])
 
 # fit the model

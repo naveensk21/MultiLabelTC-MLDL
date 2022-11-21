@@ -164,6 +164,8 @@ y_train_mlb = mlb.fit_transform(y_train)
 y_test_mlb = mlb.transform(y_test)
 label_classes = mlb.classes_
 
+
+
 # create dictionary counters with the key as the label name and the value as the total number of labels
 counters = {}
 for labels in y:
@@ -216,35 +218,24 @@ def f1_score(y_true, y_logit):
 
 
 # ################### build lstm model ###################
-def lstm_cnn_model():
-    model = Sequential()
-    model.add(Embedding(vocab_size, embed_dim, weights=[embedding_matrix], trainable=False))
-    model.add(SpatialDropout1D(0.2))
-    model.add(Conv1D(64, 3, padding='valid', activation='relu'))
-    model.add(Bidirectional(LSTM(128, return_sequences=True, dropout=0.1, recurrent_dropout=0.1)))
-    model.add(GlobalMaxPool1D())
-    model.add(Dense(128, activation='relu'))
-
-    model.add(Flatten())
-    model.add(Dense(36))
-    model.add(Activation('sigmoid'))
-
-    return model
-
-
 def lstm_model():
     model = Sequential()
     model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix], trainable=False))
+    # model.add(SpatialDropout1D(0.2))
+    # model.add(LSTM(100, dropout=0.2, recurrent_dropout=0.2))
 
     # model.add(Bidirectional(LSTM(128,
     #                              recurrent_dropout=0.1,
     #                              dropout=0.1,
     #                              return_sequences=True)))
-    model.add(LSTM(128, dropout=0.5, recurrent_dropout=0.2))
-    # model.add(Flatten())
+    model.add(LSTM(64, return_sequences=True))
+    model.add(Dropout(0.5))
+    model.add(LSTM(64))
+    model.add(Dropout(0.5))
 
-    model.add(Dense(36))
-    model.add(Activation('sigmoid'))
+    model.add(Flatten())
+
+    model.add(Dense(36, activation='sigmoid'))
 
     return model
 

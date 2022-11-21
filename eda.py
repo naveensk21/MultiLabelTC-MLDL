@@ -18,6 +18,10 @@ all_label_file_path = 'label_support.json'
 with open(all_label_file_path) as fp:
     all_labels = json.load(fp)
 
+dataset_file_path_category = 'zclean_combined_data_wcategory.json'
+with open(dataset_file_path_category) as fp:
+    category_dataset = json.load(fp)
+
 # number of mulit lables per policy text
 count_num = {}
 for i, datapoint in enumerate(dataset_json):
@@ -25,31 +29,42 @@ for i, datapoint in enumerate(dataset_json):
         count_num[i] = len(datapoint['labels'])
 
 
-# plot distribution of multi labels per policy text
-def plot_multi_lable_distri():
+# number of mulit lables per policy text
+def counting():
+    category_num = {}
+    for i, datapoint in enumerate(category_dataset):
+        if len(datapoint['data_practice']) >2:
+            category_num[i] = len(datapoint['data_practice'])
+    return category_num
+
+couter = counting()
+
+# plot distribution of multi data practices per policy text
+def plot_multi_lable_distri(count):
     plt.figure(figsize=(12, 6))
-    x = count_num.keys()
-    y = list(count_num.values())
-    plt.title('Distribution of multi-labels per privacy policy')
+    x = count.keys()
+    y = list(count.values())
+    plt.title('Distribution of multiple data practices per privacy policy')
     plt.grid()
     plt.bar(range(len(x)), y)
     plt.xlabel('Datapoints')
-    plt.ylabel('No. of times a label appeared in a privacy policy')
+    plt.ylabel('No. of times a data practice appeared in a privacy policy')
     plt.show()
+
 
 
 def create_x_y():
 
-    with open(dataset_file_path) as fp:
-        dataset_json = json.load(fp)
+    with open(dataset_file_path_category) as fp:
+        category_json = json.load(fp)
 
     x = [] # policy texts
     y = [] # labels
 
-    random.shuffle(dataset_json)
-    for datapoint in dataset_json:
+    random.shuffle(category_json)
+    for datapoint in category_json:
         x.append(datapoint['policy_text'])
-        y.append(datapoint['labels'])
+        y.append(datapoint['data_practice'])
 
     # print(f"Loaded {len(x)} policies with {len(y)} corresponding sets of policy practices")
     return x, y
@@ -67,6 +82,9 @@ def plot_word_distri(sentence_list):
         senten_len = len(words)
         word_length.append(senten_len)
 
+    print(max(word_length))
+    print(min(word_length))
+
     plt.figure(figsize=(12, 6))
     values = word_length
     plt.title('Word distribution of the policy text')
@@ -74,8 +92,11 @@ def plot_word_distri(sentence_list):
     plt.bar(range(len(sentence_list)), values)
     plt.xlabel(f'Number of policy text: {len(sentence_list)}')
     plt.ylabel('No. of words in a policy text')
-    # plt.show()
+    plt.show()
 
+plot_word_distri(X)
+
+exit()
 # ----- Preprocessing -----
 def preprocess_text(text):
     text = text.lower()
@@ -117,10 +138,13 @@ def plot_prepro_word_distri(pre_text):
     plt.bar(range(len(pre_text)), values)
     plt.xlabel(f'Number of policy text: {len(pre_text)}')
     plt.ylabel('No. of words in a preprocessed policy text')
-    # plt.show()
+    plt.show()
+
 
 plot_prepro_word_distri(preprocessed_text)
 exit()
+
+
 # create dictionary counters with the key as the label name and the value as the total number of labels
 counters = {}
 for labels in y:
@@ -129,6 +153,38 @@ for labels in y:
             counters[label] += 1
         else:
             counters[label] = 1
+
+
+def get_category_count(category_data):
+    category_count = {}
+    for datapoint in category_data:
+        categories = datapoint["data_practice"]
+        for category in categories:
+            if category_count.get(category) is not None:
+                category_count[category] += 1
+            else:
+                category_count[category] = 1
+    return category_count
+
+
+counter_category = get_category_count(category_dataset)
+
+print(counter_category)
+
+
+def plot_data_practice_distribution(data):
+    plt.figure(figsize=(12, 6))
+    values = list(data.values())
+    name = list(data.keys())
+    plt.grid(zorder=0)
+    plt.barh(name, values)
+    plt.xlabel('No. of times each data practice appeared in the dataset')
+    plt.ylabel('Data Practices')
+    for i, v in enumerate(values):
+        plt.text(v + 3, i, str(v), color='blue', va='center', fontweight='bold')
+    plt.tight_layout()
+    plt.show()
+    pass
 
 
 # plot bar chart to visualize the distribution of labels (check for imbalance)

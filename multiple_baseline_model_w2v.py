@@ -48,13 +48,13 @@ dataset_file_path = 'top_40_labels_dataset.json'
 
 # list of classfiers to test
 classifiers = [
-    RandomForestClassifier(n_estimators=300, min_samples_split=2, min_samples_leaf=1, max_depth=16, max_features='auto'),
-    LinearSVC(C=150, tol=0.001),
-    SVC(C=20, tol=0.001),
-    AdaBoostClassifier(n_estimators=200, learning_rate=0.1),
-    LogisticRegression(tol=0.01, C=200),
-    SGDClassifier(alpha=0.0001, max_iter=1000, tol=0.001, power_t=0.5, validation_fraction=0.1),
-    KNeighborsClassifier(n_neighbors=3)
+    RandomForestClassifier(n_estimators=200, min_samples_split=2, min_samples_leaf=1, max_depth=50, max_features='auto', random_state=42),
+    LinearSVC(C=150, tol=0.001, random_state=42),
+    SVC(C=20, tol=0.003, random_state=42),
+    AdaBoostClassifier(n_estimators=200, learning_rate=0.1, random_state=42),
+    LogisticRegression(tol=0.01, C=200, random_state=42),
+    SGDClassifier(alpha=0.0001, max_iter=1000, tol=0.001, power_t=0.5, validation_fraction=0.1, random_state=42),
+    KNeighborsClassifier(n_neighbors=3, weights='distance', leaf_size=40, metric='minkowski')
 ]
 
 for classifier in classifiers:
@@ -109,7 +109,7 @@ for classifier in classifiers:
     # print(mlb.classes_[1000:1500])
 
     # split the data set into training and testing
-    X_train, X_test, y_train, y_test = train_test_split(clean_data_tokenized, y_mlb, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(clean_data_tokenized, y_mlb, test_size=0.2, random_state=42)
 
     # ---- Feature Engineering ----
     # -----Word2Vec -----
@@ -151,7 +151,7 @@ for classifier in classifiers:
     # ----- Multi-label Classification with Binary Relevance  -----
     # each target variable(y1,y2,...) is treated independently and reduced to n classification problems
     start = time.time()
-    wrapper_classifier = LabelPowerset(
+    wrapper_classifier = BinaryRelevance(
         classifier=classifier,
         require_dense=[False, True])
 
@@ -168,9 +168,9 @@ for classifier in classifiers:
     print('prediction time taken....', round(time.time() - start, 0), 'seconds')
 
     # return the models metrics
-    br_precision = precision_score(y_test, y_pred, average='macro')
-    br_recall = recall_score(y_test, y_pred, average='macro')
-    br_f1 = f1_score(y_test, y_pred, average='macro')
+    br_precision = precision_score(y_test, y_pred, average='micro')
+    br_recall = recall_score(y_test, y_pred, average='micro')
+    br_f1 = f1_score(y_test, y_pred, average='micro')
     br_hamm = hamming_loss(y_test, y_pred)
     # br_jr_score_samples = jaccard_score(y_test, y_pred, average='samples')
     # br_jr_score_macro = jaccard_score(y_test, y_pred, average='macro')

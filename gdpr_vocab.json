@@ -1,5 +1,5 @@
 {
-  "first party": "Organisation",
+  "first party": "DataController",
   "cookies": "Technology",
   "targeted advertising": "TargetedAdvertising",
 
@@ -10,6 +10,7 @@
   "company has learned about the user" : "hasDataSubject",
 
   "third party" : "ThirdParty",
+  "third parties": "ThirdParty",
   "personal information" : "PersonalData",
   "does receive" : "hasRecipient",
   "information about you": "PersonalData",
@@ -18,6 +19,9 @@
   "legal requirments": "LegalCompliance",
 
   "employee" : "Employee",
+  "SSL" : "Technology",
+  "store": "Store",
+  "stored": "Store",
   "stored securely": "EncryptionAtRest",
   "encryption": "EncryptionInUse",
   "transfer": "EncryptionInTransfer",
@@ -41,7 +45,7 @@
   "service or feature" : "serviceProvision",
 
   "analytics": "ServiceUsageAnalytics",
-  "Collection happens on the website": "DataSource",
+  "Collection happens on the website": "Collect",
   "advertising" : "Advertising",
   "collects your": "CollectedPersonalData",
   "marketing" : "Marketing",

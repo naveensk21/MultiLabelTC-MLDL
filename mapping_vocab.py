@@ -67,7 +67,7 @@ def get_pred_labels(predicted_labels):
     # create a temporary list and sorts the probabilities in descending order with the label number.
     sort_predicted_labels = sorted([(i, pred_prob) for i, pred_prob in enumerate(list(predicted_labels))],
                                    key=lambda x: x[1], reverse=True)
-    # a list with the predicted probabilities above the threshold of 0.5
+    # a list with the predicted probabilities above the cutoff of 0.5
     label_list = [prob for prob in sort_predicted_labels if prob[1] >= 0.5]
     # list of the the original text labels
     labels = [label_class[1] for label in label_list[:8] for label_class in mlb if label[0] == label_class[0]]
@@ -106,7 +106,7 @@ def single_predicted_data(text_string):
 
     output_data.append({'policy_text': loaded_tokenizer.sequences_to_texts(seq),
                         'predicted_labels': get_pred_labels(pred.ravel().tolist()),
-                        'GDPR_vocab': get_dpv_vocab(get_pred_labels(pred.ravel().tolist()))})
+                        'DPV': get_dpv_vocab(get_pred_labels(pred.ravel().tolist()))})
 
     return output_data
 
@@ -125,7 +125,7 @@ def multi_predicted_data(model, text_values):
     for i, datapoint in enumerate(text_values):
         output_data.append({'policy_text': remove_tags(X[i]),
                               'predicted_labels': get_pred_labels(pred[i].tolist()),
-                              'GDPR_vocab': get_dpv_vocab(get_pred_labels(pred[i].tolist()))})
+                              'DPV': get_dpv_vocab(get_pred_labels(pred[i].tolist()))})
 
     return output_data
 

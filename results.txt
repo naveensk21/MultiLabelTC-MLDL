@@ -203,11 +203,8 @@ Hamming Loss: 0.032
 -------------------------------------------------
 cnn network
 -------------------------------------------------
+
 # # bs-16, lr-0.001, dp-0.6-0.6, conv-160,4
-loss: 0.15778566896915436
-precision: 0.5239361524581909
-recall: 0.5596590638160706
-c_f1: 0.5378256440162659
 -------------------------
 loss: 0.14787784218788147
 precision: 0.5360000133514404
@@ -215,39 +212,29 @@ recall: 0.5775862336158752
 c_f1: 0.5729897022247314
 --------------------------
 
-#bs-16, lr-0.01, dp-0.5-0.5, conv1-250,3, conv1-270,3
-loss: 0.10036792606115341
-precision: 0.6052631735801697
-recall: 0.5154061913490295
-c_f1: 0.5591225624084473
-
 #bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,4
 loss: 0.0927027016878128
 precision: 0.5697329640388489
 recall: 0.5714285969734192
 c_f1: 0.5692447423934937
 
-#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,3
-loss: 0.10056645423173904
-precision: 0.5894736647605896
-recall: 0.6363636255264282
-c_f1: 0.6027687191963196
-
-precision: 0.5702917575836182
-recall: 0.6231883764266968
-get_f1: 0.5789703726768494
-
-# bs-16, lr-0.001, dp-0.6-0.6, conv-350,3, conv-370,3
-loss: 0.10055424273014069
-precision: 0.53125
-recall: 0.571865439414978
-c_f1: 0.5578574538230896
-
 #bs-16, lr-0.001, dp-0.6-0.6, conv-183,3
 loss: 0.29696816205978394
 precision: 0.3586800694465637
 recall: 0.6983240246772766
 c_f1: 0.47736337780952454
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,5, conv1-220,5
+precision: 0.6067073345184326
+recall: 0.5751445293426514
+get_f1: 0.5829235315322876
+
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,3
+loss: 0.10056645423173904
+precision: 0.5894736647605896
+recall: 0.6363636255264282
+c_f1: 0.6027687191963196
 
 optuna: Trial 22 finished with value: 0.5630239248275757 and parameters: {'n_layers': 2, 'dropout': 0.057091867380322646,
 'filters': 38, 'kernel_sizes': 4, 'strides': 1,
@@ -265,8 +252,201 @@ Trial 33 finished with value: 0.4393022060394287 and parameters: {'n_layers': 2,
 -------------------------------------------------
 Bidirectional-LSTM or LSTM-CNN Model
 -------------------------------------------------
+##bidire 128-dp:0.7, 135-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_3: 0.5907335877418518
+recall_3: 0.4540059268474579
+c_f1: 0.5109829306602478
+
+
+
+#bidirectional 185-dp: 0.6 190-dp:0.6  bs-12 lr-0.0001
+precision_12: 0.49497488141059875
+recall_12: 0.5533707737922668
+c_f1: 0.5215594172477722
+
+#bidire 128-dp:0.7, 128-dp:0.7   bs:16 lr-0.001
+precision: 0.6168582439422607
+recall: 0.47774481773376465
+c_f1: 0.5344550609588623
+
+#bidire 32-dp:0.7, 128-dp:0.7   bs:16 lr-0.001
+precision_3: 0.5379746556282043
+recall_3: 0.5044510364532471
+c_f1: 0.5078116655349731
+
+##bidire 16-dp:0.7, 128-dp:0.7   bs:16 lr-0.001
+precision_4: 0.5014084577560425
+recall_4: 0.5281898975372314
+c_f1: 0.5054097771644592
+
+##bidire 16-dp:0.7, 64-dp:0.7   bs:16 lr-0.001
+precision_5: 0.528124988079071
+recall_5: 0.501483678817749
+c_f1: 0.49487948417663574
+
+##bidire 16-dp:0.7, 88-dp:0.7   bs:16 lr-0.001
+precision_6: 0.555891215801239
+recall_6: 0.5459940433502197
+c_f1: 0.546823263168335
+
+
+##bidire 16-dp:0.7, 82-dp:0.7   bs:16 lr-0.001
+precision_8: 0.5
+recall_8: 0.5934718251228333
+c_f1: 0.5286514163017273
+
+##bidire 16-dp:0.7, 78-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_11: 0.5289255976676941
+recall_11: 0.5697329640388489
+c_f1: 0.5491048693656921
+
+##bidire 16-dp:0.7, 78-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_12: 0.5432098507881165
+recall_12: 0.5222551822662354
+c_f1: 0.5204870104789734
+
+##bidire 16-dp:0.7, 68-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_17: 0.5488505959510803
+recall_17: 0.5667656064033508
+c_f1: 0.5569500923156738
+
+# bidire 13-dp:0.7, 53-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_25: 0.5074626803398132
+recall_25: 0.6053412556648254
+c_f1: 0.5440539717674255
+
+# bidire 16-dp:0.7, 46-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_29: 0.47152620553970337
+recall_29: 0.6142433285713196
+c_f1: 0.5269097685813904
 
 
 
 
+# -------------top 10 popular labels----------------
+Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 3.31 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.974
+Binary Relevance Recall:  0.521
+Binary Relevance F1-score: 0.679
+Binary Relevance Hamming Loss: 0.056
+
+Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.07 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.777
+Binary Relevance Recall:  0.676
+Binary Relevance F1-score: 0.723
+Binary Relevance Hamming Loss: 0.057
+
+Classifier: <class 'sklearn.svm._classes.SVC'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.47 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.955
+Binary Relevance Recall:  0.571
+Binary Relevance F1-score: 0.715
+Binary Relevance Hamming Loss: 0.053
+
+Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 6.07 seconds
+prediction time taken.... 1.0 seconds
+Binary Relevance Precision:  0.888
+Binary Relevance Recall:  0.682
+Binary Relevance F1-score: 0.772
+Binary Relevance Hamming Loss: 0.048
+
+Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.19 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.917
+Binary Relevance Recall:  0.654
+Binary Relevance F1-score: 0.763
+Binary Relevance Hamming Loss: 0.049
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.01 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.842
+Binary Relevance Recall:  0.701
+Binary Relevance F1-score: 0.765
+Binary Relevance Hamming Loss: 0.049
+
+Classifier: <class 'sklearn.neighbors._classification.KNeighborsClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.01 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.797
+Binary Relevance Recall:  0.694
+Binary Relevance F1-score: 0.742
+Binary Relevance Hamming Loss: 0.056
+
+
+--------------------------------------------------------
+Results from classifiying the data practices as labels
+--------------------------------------------------------
+
+CNN Model
+---------
+# Conv1d-64
+loss: 0.3834798038005829
+precision: 0.7540322542190552
+recall: 0.6732673048973083
+get_f1: 0.7186695337295532
+
+#drop-0.6 Conv1d-64 drop-0.6 conv1d-128 drop-0.6 conv1d-128
+loss: 0.2663356065750122
+precision: 0.7713696956634521
+recall: 0.6909593939781189
+get_f1: 0.7332054376602173
+
+
+# Conv1d-128
+loss: 0.38435038924217224
+precision: 0.7459095120429993
+recall: 0.7000903487205505
+get_f1: 0.7261269688606262
+
+#drop-0.6 Conv1d-128
+loss: 0.2608160376548767
+precision: 0.7868338823318481
+recall: 0.6747311949729919
+get_f1: 0.730289936065673
+
+#drop-0.6 Conv1d-128 drop-0.6 conv1d-64
+loss: 0.3067905604839325
+precision: 0.7282809615135193
+recall: 0.7229357957839966
+get_f1: 0.7253777384757996
+
+
+#drop-0.6 Conv1d-220 drop-0.6 conv1d-220
+precision: 0.7863741517066956
+recall: 0.6085790991783142
+get_f1: 0.6850076913833618
+
+
+#drop-0.6 Conv1d-220 drop-0.6 conv1d-220
+precision_1: 0.7156521677970886
+recall_1: 0.7434507608413696
+c_f1: 0.7242441177368164
+
+#drop-0.6 Conv1d-128, drop-0.6 conv1d-128, drop-0.6 conv1d-164
+loss: 0.26514407992362976
+precision_2: 0.7366071343421936
+recall_2: 0.7452574372291565
+c_f1: 0.7427158355712891
 
