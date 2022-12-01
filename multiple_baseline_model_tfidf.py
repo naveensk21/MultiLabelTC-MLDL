@@ -36,7 +36,7 @@ warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 
 # top x labels file path
-dataset_file_path = 'zclean_combined_data_wcategory.json'
+dataset_file_path = 'top_10lb_popular_dataset.json'
 
 # list of classfiers to test
 classifiers = [
@@ -63,7 +63,7 @@ for classifier in classifiers:
         random.shuffle(dataset_json)
         for datapoint in dataset_json:
             x.append(datapoint['policy_text'])
-            y.append(datapoint['data_practice'])
+            y.append(datapoint['labels'])
 
         # print(f"Loaded {len(x)} policies with {len(y)} corresponding sets of policy practices")
         return x, y

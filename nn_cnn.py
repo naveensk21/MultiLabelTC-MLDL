@@ -27,7 +27,7 @@ from sklearn.utils import compute_class_weight
 import tensorflow as tf
 import tensorflow.python.keras.optimizer_v1
 from tensorflow import keras
-from keras.layers import Dense, Activation, Embedding, GlobalMaxPool1D, Dropout, Conv1D, Conv2D, LSTM, Flatten, BatchNormalization
+from keras.layers import Dense, Activation, Embedding, GlobalMaxPool1D, Dropout, Conv1D, Conv2D, LSTM, Flatten, BatchNormalization, Bidirectional
 from keras.models import Sequential
 from keras import Input
 from tensorflow.python.keras.optimizer_v1 import Adam
@@ -62,7 +62,7 @@ from keras import layers
 from keras_tuner import RandomSearch
 
 # load the top labels
-dataset_file_path = 'top_10lb_popular_dataset.json'
+dataset_file_path = 'top_40_labels_dataset.json'
 
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
@@ -108,6 +108,10 @@ def preprocess_text(text):
 print('--preprocessing data--')
 preprocessed_text = list(map(lambda text: preprocess_text(text), X))
 print('--preprocessing done--')
+
+# print(f"Original Text: {X[1]}")
+# print(" ")
+# print(f"Cleaned Text: {preprocessed_text[1]}")
 
 
 # --------- build the word2vec model ---------
@@ -297,20 +301,52 @@ def build_cnn_model():
 
     model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     model.add(Dropout(0.6))
-    model.add(Conv1D(220, 4, padding='valid', activation='relu', strides=1))
+    model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
 
-    # model.add(Dropout(0.6))
-    # model.add(Conv1D(220, 3, padding='valid', activation='relu', strides=1))
     model.add(layers.GlobalMaxPool1D())
-
-    # model.add(layers.Dense(64, activation='relu'))
-    # model.add(layers.Dense(32, activation='relu'))
-
     model.add(Flatten())
     model.add(Dense(n_classes, activation='sigmoid'))
 
     # model.add(Dense(n_classes))
     # model.add(Activation('sigmoid'))
+
+    return model
+
+
+def hybrid_model():
+    n_classes = len(mlb.classes_)
+
+    model = Sequential()
+
+    model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
+    model.add(Dropout(0.3))
+
+    model.add(Conv1D(64, 3, padding='valid', activation='relu', strides=1))
+    model.add(Bidirectional(LSTM(128, dropout=0.4, return_sequences=True)))
+
+    model.add(GlobalMaxPool1D())
+
+    model.add(Dense(220))
+
+    model.add(Dense(n_classes))
+    model.add(Activation('sigmoid'))
+
+    return model
+
+def bilstm_model():
+    n_classes = len(mlb.classes_)
+
+    model = Sequential()
+
+    model.add(Embedding(vocab_size, embed_dim, input_length=maxlen, weights=[embedding_matrix]))
+
+    model.add(Bidirectional(LSTM(16, dropout=0.7, return_sequences=True)))
+    model.add(Bidirectional(LSTM(68, dropout= 0.7, return_sequences=True)))
+
+    model.add(Flatten())
+
+    model.add(Dense(n_classes))
+    model.add(Activation('sigmoid'))
 
     return model
 
@@ -345,16 +381,16 @@ def train_model(epoch=30, batch_size=16, lr=0.001):
 
 # params
 start = time.time()
-epoch = 50
+epoch = 25
 # 19-0.01, 17-0.11(high recall),
 batch_size = 16
 lr = 0.001
 opt = keras.optimizers.Adam(learning_rate=lr)
 
-model = build_cnn_model()
+model = hybrid_model()
 
 model.summary()
-# plot_model(model, to_file='cnn_model_plot.png', show_shapes=True, show_layer_names=True)
+# plot_model(model, to_file='figures/bilstm_plot.png', show_shapes=True, show_layer_names=True)
 
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), get_f1])
@@ -381,13 +417,49 @@ print(f'{model.metrics_names[3]}: {score[3]}')
 #     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 # print('saved keras tokenizer')
 
+############## plot history ################
+# ---- visualize the history ----
+def plot_history(history):
+    plt.plot(history.history['precision'], label="precision")
+    plt.plot(history.history['val_precision'])
+    plt.title('Validation Precision History')
+    plt.ylabel('Precision value')
+    plt.xlabel('No. epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    # plt.savefig(f'Precision({lr}-{batch_size}).png')
+    plt.show()
+
+    # summarize for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Validation Loss History')
+    plt.ylabel('Loss value')
+    plt.xlabel('No. epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    # plt.savefig(f'Loss({lr}-{batch_size}).png')
+    plt.show()
+
+    # summarize for Recall
+    plt.plot(history.history['recall'])
+    plt.plot(history.history['val_recall'])
+    plt.title('Validation Recall History')
+    plt.ylabel('Recall value')
+    plt.xlabel('No. epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    # plt.savefig(f'Recall ({lr}-{batch_size}).png')
+    plt.show()
+
+plot_history(history)
+
+
+
 exit()
 ############## Test Model #################
 # load the model
-loaded_model = load_model('cnn_model.h5')
+loaded_model = load_model('model/cnn_model.h5')
 
 # load tokenizer
-with open('tokenizer.pickle', 'rb') as handle:
+with open('model/tokenizer.pickle', 'rb') as handle:
     loaded_tokenizer = pickle.load(handle)
 
 # predict a segment text
@@ -402,11 +474,6 @@ pred = loaded_model.predict(padded)
 print(pred)
 
 
-
-
-
-
-exit()
 ################## K-fold ####################
 def kfold_val():
     cross_val = KFold(n_splits=5, shuffle=True, random_state=42)
@@ -471,39 +538,7 @@ def kfold_val():
 # print(f'Weighted Mean Precision Score: {mean_avg_precs}')
 
 
-############## plot history ################
-# ---- visualize the history ----
-def plot_history(history):
-    plt.plot(history.history['precision'])
-    plt.plot(history.history['val_precision'])
-    plt.title('Model Precision')
-    plt.ylabel('precision')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig(f'Precision({lr}-{batch_size}).png')
-    plt.show()
 
-    # summarize for loss
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('Model Loss')
-    plt.ylabel('precision')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig(f'Loss({lr}-{batch_size}).png')
-    plt.show()
-
-    # summarize for loss
-    plt.plot(history.history['recall'])
-    plt.plot(history.history['val_recall'])
-    plt.title('Model recall')
-    plt.ylabel('recall')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig(f'Recall ({lr}-{batch_size}).png')
-    plt.show()
-
-# plot_history()
 
 
 

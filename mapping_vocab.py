@@ -12,7 +12,7 @@ with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
 # gppr vocab path
-gdpr_dataset_path = 'gdpr_vocab.json'
+gdpr_dataset_path = 'dpv_vocab.json'
 with open(gdpr_dataset_path) as fp:
     gdpr_vocab = json.load(fp)
 
@@ -41,10 +41,10 @@ y_mlb = mlb.fit_transform(y)
 label_classes = mlb.classes_
 
 # load the model
-loaded_model = load_model('cnn_model.h5')
+loaded_model = load_model('model/cnn_model.h5')
 
 # load tokenizer
-with open('tokenizer.pickle', 'rb') as handle:
+with open('model/cnn_tokenizer.pickle', 'rb') as handle:
     loaded_tokenizer = pickle.load(handle)
 
 # predict a segment text
@@ -113,16 +113,18 @@ def single_predicted_data(text_string):
 
 single_data = single_predicted_data("<strong> Email. </strong> <br> <br> You can opt-out from any Meredith email newsletter or commercial email list and prevent the collection of related email response information by our email service providers by using the unsubscribe link at the bottom of each message and/ or by visiting the Email Preferences page on our sites and updating your preferences. If you no longer want to receive third-party email offers that you requested through our Services, simply follow the advertiser's unsubscribe link or opt-out instructions that should be included in every commercial message you receive. <br> <br>")
 
-# display the associated set of labels for that policy text
+# display the associated set of labels single privacy policy
 print(single_data)
 
 
-# multiple policy_text_predictions
-def multi_predicted_data(model, text_values):
-    output_data = []
-    pred = model.predict(text_values)
 
-    for i, datapoint in enumerate(text_values):
+exit()
+# multiple policy_text_predictions
+def multi_predicted_data(model, policy_text):
+    output_data = []
+    pred = model.predict(policy_text)
+
+    for i, datapoint in enumerate(policy_text):
         output_data.append({'policy_text': remove_tags(X[i]),
                               'predicted_labels': get_pred_labels(pred[i].tolist()),
                               'DPV': get_dpv_vocab(get_pred_labels(pred[i].tolist()))})

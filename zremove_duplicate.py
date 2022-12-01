@@ -26,9 +26,7 @@ print(len(new_joined_data))
 print(new_joined_data[:20])
 
 
-exit()
-
-with open('zzclean_dataset.json', "w") as f:
+with open('zzclean_dataset_wcategory.json', "w") as f:
     json.dump(dataset_json, f)
 
 

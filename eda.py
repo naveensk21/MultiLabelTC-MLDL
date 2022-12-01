@@ -22,11 +22,44 @@ dataset_file_path_category = 'zclean_combined_data_wcategory.json'
 with open(dataset_file_path_category) as fp:
     category_dataset = json.load(fp)
 
+dataset_file_path = 'combined_data.json'
+with open(dataset_file_path) as fp:
+    dataset_json2 = json.load(fp)
+
+
+print(len(dataset_json))
+print(len(dataset_json2))
+
+exit()
 # number of mulit lables per policy text
 count_num = {}
 for i, datapoint in enumerate(dataset_json):
     if len(datapoint['labels']) > 2:
         count_num[i] = len(datapoint['labels'])
+
+
+def plot_label_string_distri():
+    x = range(len(all_labels))
+    y = all_labels.values()
+
+    # print(len(y)) # 7056
+    # print(max(y)) # 522
+    # print(min(y)) # 1
+
+    # out of 7056 unique string labels 4775 label string only appears 1 in a policy text
+    # count_val = 0
+    # for value in y:
+    #     if value == 1:
+    #         count_val += 1
+
+    plt.figure(figsize=(12, 6))
+    plt.title('Distribution of label string ')
+    plt.grid()
+    plt.bar(x, y)
+    plt.xlabel('Label String')
+    plt.ylabel('No. of times a label string appeared in a privacy policy')
+    plt.axis([0, 7056, 0, 522])
+    plt.show()
 
 
 # number of mulit lables per policy text
@@ -37,7 +70,6 @@ def counting():
             category_num[i] = len(datapoint['data_practice'])
     return category_num
 
-couter = counting()
 
 # plot distribution of multi data practices per policy text
 def plot_multi_lable_distri(count):
@@ -94,9 +126,7 @@ def plot_word_distri(sentence_list):
     plt.ylabel('No. of words in a policy text')
     plt.show()
 
-plot_word_distri(X)
 
-exit()
 # ----- Preprocessing -----
 def preprocess_text(text):
     text = text.lower()
@@ -141,9 +171,6 @@ def plot_prepro_word_distri(pre_text):
     plt.show()
 
 
-plot_prepro_word_distri(preprocessed_text)
-exit()
-
 
 # create dictionary counters with the key as the label name and the value as the total number of labels
 counters = {}
@@ -166,10 +193,6 @@ def get_category_count(category_data):
                 category_count[category] = 1
     return category_count
 
-
-counter_category = get_category_count(category_dataset)
-
-print(counter_category)
 
 
 def plot_data_practice_distribution(data):

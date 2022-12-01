@@ -1,0 +1,77 @@
+{
+  "first party": "DataController",
+  "cookies": "Technology",
+  "targeted advertising": "TargetedAdvertising",
+
+  "user" : "User",
+  "edit their information": "hasRight",
+  "edit" : "Modify",
+  "company": "Organisation",
+  "company has learned about the user" : "hasDataSubject",
+
+  "third party" : "ThirdParty",
+  "third parties": "ThirdParty",
+  "personal information" : "PersonalData",
+  "does receive" : "hasRecipient",
+  "information about you": "PersonalData",
+
+  "services operations and security": "ThirdPartySecurityProcedures",
+  "legal requirments": "LegalCompliance",
+
+  "employee" : "Employee",
+  "SSL" : "Technology",
+  "store": "Store",
+  "stored": "Store",
+  "stored securely": "EncryptionAtRest",
+  "encryption": "EncryptionInUse",
+  "transfer": "EncryptionInTransfer",
+
+  "organization has a privacy or security program": "hasTechnicalOrganisationalMeasure",
+  "unauthorized access": "IntrusionDetectionSystem",
+  "training for employees": "DataProtectionTraining",
+
+  "policy makes": "hasPolicy",
+  "children": "Child",
+  "citizen": "Citizen",
+
+  "your IP address" : "hasAddress",
+  "need-to-know basis": "hasObligation",
+  "accessible": "Access",
+  "data": "Data",
+
+  "collect": "Collect",
+  "device": "Technology",
+  "purpose": "Purpose",
+  "service or feature" : "serviceProvision",
+
+  "analytics": "ServiceUsageAnalytics",
+  "Collection happens on the website": "Collect",
+  "advertising" : "Advertising",
+  "collects your": "CollectedPersonalData",
+  "marketing" : "Marketing",
+  "information for marketing purposes": "hasPurpose",
+
+  "personalization" : "Personalisation",
+  "service operations or security": "EnforceSecurity",
+
+  "website" : "Representative",
+  "account can edit": "AccountManagement",
+  "Users": "Users",
+
+  "policy" : "Policy",
+  "makes specific": "hasPurpose",
+  "provisions": "serviceProvision",
+  "international audiences": "NonCitizen",
+  "data transfer": "Transfer",
+  "change": "Alter",
+  "affects": "hasImpact",
+  "data practice": "PrivacyNotice",
+  "notified": "CommunicationManagement",
+
+  "opt out" : "Optional",
+  "contact information": "hasContact",
+
+  "you can": "User",
+  "to control ": "Modify",
+  "the use": "Use"
+}

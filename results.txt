@@ -258,7 +258,6 @@ recall_3: 0.4540059268474579
 c_f1: 0.5109829306602478
 
 
-
 #bidirectional 185-dp: 0.6 190-dp:0.6  bs-12 lr-0.0001
 precision_12: 0.49497488141059875
 recall_12: 0.5533707737922668
@@ -295,10 +294,6 @@ precision_8: 0.5
 recall_8: 0.5934718251228333
 c_f1: 0.5286514163017273
 
-##bidire 16-dp:0.7, 78-dp:0.7   bs:16 lr-0.001 dp-0.6
-precision_11: 0.5289255976676941
-recall_11: 0.5697329640388489
-c_f1: 0.5491048693656921
 
 ##bidire 16-dp:0.7, 78-dp:0.7   bs:16 lr-0.001 dp-0.6
 precision_12: 0.5432098507881165
@@ -321,6 +316,59 @@ recall_29: 0.6142433285713196
 c_f1: 0.5269097685813904
 
 
+# lstm 16-dp:0.7, 77-dp:0.7   bs:16 lr-0.001 dp-0.6
+loss: 0.17884834110736847
+precision_10: 0.5451807379722595
+recall_10: 0.5084269642829895
+c_f1: 0.5114240050315857
+
+
+-------------------------------
+#Hybrid MOdel (bs-16, lr-0.001, epoch-25)
+--------------------------------
+# drop 0.6, conv1d-220(3), bidir-220(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.08875548094511032
+precision_9: 0.5617647171020508
+recall_9: 0.602523684501648
+c_f1: 0.5983261466026306
+
+# drop 0.6, conv1d-64(3), bidir-128(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.09808946400880814
+precision_8: 0.5068492889404297
+recall_8: 0.5835962295532227
+c_f1: 0.5603612065315247
+
+
+# drop 0.4, conv1d-64(3), bidir-128(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.09386708587408066
+precision_10: 0.573913037776947
+recall_10: 0.624605655670166
+c_f1: 0.6149471998214722
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.09148261696100235
+precision_12: 0.5861027240753174
+recall_12: 0.6119873523712158
+c_f1: 0.6155158877372742
+
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4),bidir-256(drop-0.3) GlobalMaxPool1D,  Dense(128)
+loss: 0.10309144854545593
+precision_24: 0.5494505763053894
+recall_24: 0.6309148073196411
+c_f1: 0.603750467300415
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4),bidir-256(drop-0.3) GlobalMaxPool1D,  Dense(32)
+loss: 0.08229336142539978
+precision_28: 0.6423357725143433
+recall_28: 0.5552050471305847
+c_f1: 0.5955923199653625
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4),bidir-256(drop-0.3) GlobalMaxPool1D,  Dense(220)
+loss: 0.09737812727689743
+precision_34: 0.5656836628913879
+recall_34: 0.6656151413917542
+c_f1: 0.6223028302192688
 
 
 # -------------top 10 popular labels----------------
@@ -449,4 +497,155 @@ loss: 0.26514407992362976
 precision_2: 0.7366071343421936
 recall_2: 0.7452574372291565
 c_f1: 0.7427158355712891
+
+
+
+CNN-LSTM
+--------
+#drop-0.6 Conv1d-64, BiLSTM-128(0.7), Dense-64
+loss: 0.2991151213645935
+precision_11: 0.7147541046142578
+recall_11: 0.7877145409584045
+c_f1: 0.7581914663314819
+
+#drop-0.6 Conv1d-128, BiLSTM-64(0.7), Dense-64
+loss: 0.4042056202888489
+precision_12: 0.7569060921669006
+recall_12: 0.7425474524497986
+c_f1: 0.7504614591598511
+
+#spatialdrop-0.5 Conv1d-64, BiLSTM-64(0.7),BiLSTM-32(0.7) Dense-32
+loss: 0.3655598759651184
+precision_5: 0.7550644278526306
+recall_5: 0.7488584518432617
+c_f1: 0.755763828754425
+
+#drop-0.6 Conv1d-128, BiLSTM-128(0.7), Dense-64
+loss: 0.4588524103164673
+precision_14: 0.7435232996940613
+recall_14: 0.7777777910232544
+c_f1: 0.7606516480445862
+
+#drop-0.6 Conv1d-64, BiLSTM-64(0.7),BiLSTM-64(0.7) Dense-128
+loss: 0.2910599708557129
+precision_23: 0.7838364243507385
+recall_23: 0.7271906137466431
+c_f1: 0.758427083492279
+
+
+--- Study statistics --- Hybrid Model --------
+Number of completed trials: 50
+Trial Number: 16
+Metric: [0.8307349681854248, 0.7095890641212463, 0.7749279141426086]
+Params
+   dropout0: 0.5426020879151837
+   filters1: 243
+   kernel_sizes1: 2
+   strides1: 1
+   units1: 77
+   dropout1: 0.11456688355992571
+   units3: 303
+   learning_rate: 0.001374437494986253
+   size: 61
+
+Trial Number: 29
+Metric: [0.8993710875511169, 0.6739726066589355, 0.7329486608505249]
+Params
+   dropout0: 0.02480831008268647
+   filters1: 237
+   kernel_sizes1: 3
+   strides1: 2
+   units1: 246
+   dropout1: 0.351061698587664
+   units3: 59
+   learning_rate: 2.0977021050737236e-05
+   size: 17
+
+Trial Number: 37
+Metric: [0.8429319262504578, 0.7324200868606567, 0.7747049331665039]
+Params
+   dropout0: 0.020175637366060893
+   filters1: 312
+   kernel_sizes1: 4
+   strides1: 1
+   units1: 302
+   dropout1: 0.1503171702611922
+   units3: 341
+   learning_rate: 0.0027332525999280224
+   size: 77
+
+Trial Number: 41
+Metric: [1.0, 0.6100456714630127, 0.6808467507362366]
+Params
+   dropout0: 0.44969288559373977
+   filters1: 69
+   kernel_sizes1: 4
+   strides1: 1
+   units1: 162
+   dropout1: 0.6555975474509083
+   units3: 10
+   learning_rate: 4.370294163755596e-05
+   size: 59
+
+Hybrid 2.0
+Trial Number: 15
+Metric: [0.9003496766090393, 0.7705357074737549, 0.7280663251876831]
+Params
+   filters1: 184
+   kernel_sizes1: 3
+   strides1: 1
+   units1: 135
+   dropout1: 0.1262064160849212
+   units2: 177
+   dropout2: 0.3563906793553285
+   learning_rate: 0.0002426021803432712
+   size: 77
+
+Trial Number: 13
+Metric: [0.8026756048202515, 0.7857142686843872, 0.7232199907302856]
+Params
+   filters1: 210
+   kernel_sizes1: 3
+   strides1: 2
+   units1: 368
+   dropout1: 0.29560083099580325
+   units2: 364
+   dropout2: 0.28794689888026287
+   learning_rate: 2.499723518105788e-05
+   size: 49
+
+Trial Number: 6
+Metric: [0.8095238208770752, 0.8374999761581421, 0.7135106921195984]
+Params
+   filters1: 257
+   kernel_sizes1: 4
+   strides1: 2
+   units1: 111
+   dropout1: 0.16450967848218637
+   units2: 47
+   dropout2: 0.4364980280026683
+   learning_rate: 0.00010962647509526952
+   size: 113
+
+
+# LSTM OPTUNA
+Trial 53 finished with values: [0.8117154836654663, 0.7362020611763, 0.7601026892662048] and parameters: {'n_layers': 4, 'units0': 386, 'dropout0': 0.17437659597442606, 'units1': 32, 'dropout1': 0.44308574813525486, 'units2': 266, 'dropout2': 0.023491378564615615, 'units3': 113, 'dropout3': 0.15206135645379792, 'learning_rate': 0.002386767999388415, 'size': 41}.
+
+Trial 0 finished with values: [0.8416347503662109, 0.7146866321563721, 0.7466397881507874] and parameters: {'n_layers': 4, 'units0': 386, 'dropout0': 0.18014209484810273, 'units1': 90, 'dropout1': 0.09421391929811088, 'units2': 87, 'dropout2': 0.1689504884005337, 'units3': 392, 'dropout3': 0.6681930531951811, 'learning_rate': 0.002386767999388415, 'size': 94}
+
+# CNN OPTUNA
+Trial 47 finished with values: [0.8010269403457642, 0.7033976316452026, 0.7313387393951416] and parameters: {'n_layers': 3, 'dropout': 0.6538823879661368, 'filters0': 55, 'kernel_sizes0': 3, 'strides0': 1, 'dropout0': 0.5982219283179924, 'filters1': 188, 'kernel_sizes1': 4, 'strides1': 1, 'dropout1': 0.4038493755329198, 'filters2': 246, 'kernel_sizes2': 4, 'strides2': 2, 'dropout2': 0.1451702318810265, 'learning_rate': 0.0021885048355969067, 'size': 60}.
+
+Trial 32 finished with values: [0.7913340926170349, 0.7309458255767822, 0.7308201789855957] and parameters: {'n_layers': 1, 'dropout': 0.1891366425883495, 'filters0': 176, 'kernel_sizes0': 2, 'strides0': 2, 'dropout0': 0.19385108279263957, 'learning_rate': 0.002421104009237147, 'size': 81}
+
+Trial 24 finished with values: [0.7909091114997864, 0.8007346391677856, 0.6027069687843323] and parameters: {'n_layers': 1, 'dropout': 0.31721626706066125, 'filters0': 117, 'kernel_sizes0': 2, 'strides0': 2, 'dropout0': 0.3037029652112373, 'learning_rate': 3.812967075516252e-05, 'size': 128}
+
+ Trial 9 finished with values: [0.8231046795845032, 0.7309458255767822, 0.7435720562934875] and parameters: {'n_layers': 3, 'dropout': 0.5626045576017299, 'filters0': 14, 'kernel_sizes0': 3, 'strides0': 2, 'dropout0': 0.19902599962174317, 'filters1': 398, 'kernel_sizes1': 2, 'strides1': 1, 'dropout1': 0.31227367301980513, 'filters2': 269, 'kernel_sizes2': 3, 'strides2': 2, 'dropout2': 0.43736220462031083, 'learning_rate': 0.0018113102485168044, 'size': 33}
+
+Trial 31 finished with values: [0.8390804529190063, 0.7033976316452026, 0.749394953250885] and parameters: {'dropout0': 0.32878254431384385, 'filters0': 140, 'kernel_sizes0': 3, 'strides0': 1, 'dropout1': 0.2744325548277607, 'filters1': 364, 'kernel_sizes1': 4, 'strides1': 1, 'learning_rate': 0.0009826148319153178, 'size': 73}.
+
+Trial 23 finished with values: [0.8024193644523621, 0.7346189022064209, 0.7577032446861267] and parameters: {'dropout0': 0.549135103102723, 'filters0': 120, 'kernel_sizes0': 3, 'strides0': 1, 'dropout1': 0.27653915265559365, 'filters1': 82, 'kernel_sizes1': 2, 'strides1': 1, 'learning_rate': 0.005728855949693471, 'size': 120}
+
+Trial 37 finished with values: [0.8306074738502502, 0.6776859760284424, 0.7402566075325012] and parameters: {'dropout0': 0.41271794919306404, 'filters0': 27, 'kernel_sizes0': 2, 'strides0': 1, 'dropout1': 0.1777580912065194, 'filters1': 243, 'kernel_sizes1': 4, 'strides1': 2, 'dropout2': 0.19590833705285707, 'filters2': 343, 'kernel_sizes2': 5, 'strides2': 1, 'learning_rate': 0.007711811694114434, 'size': 43}.
+
 
