@@ -25,7 +25,7 @@ for datapoint in dataset_json:
         else:
             counters[label] = 1
 
-
+# count category/data practice support
 def get_category_count():
     category_count = {}
     for datapoint in category_dataset:
@@ -38,6 +38,7 @@ def get_category_count():
     return category_count
 
 
+# print labels that occur over 40
 for label, occurances_count in counters.items():
     if occurances_count > 40:
         print(f"{occurances_count}: {label}")

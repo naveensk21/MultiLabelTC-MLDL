@@ -308,8 +308,7 @@ def hybrid_model():
 
     model.add(Dense(220))
 
-    model.add(Dense(n_classes))
-    model.add(Activation('sigmoid'))
+    model.add(Dense(n_classes, activation='sigmoid'))
 
     return model
 
@@ -325,10 +324,10 @@ opt = keras.optimizers.Adam(learning_rate=lr)
 model = hybrid_model()
 
 model.summary()
-# plot_model(model, to_file='figures/bilstm_plot.png', show_shapes=True, show_layer_names=True)
+# plot_model(model, to_file='figures/hybrid_plot_2.png', show_shapes=True, show_layer_names=True)
 
 # Checkpoint to save best model
-checkpoint = ModelCheckpoint('best_model.h5', save_best_only = True, monitor = 'val_loss', verbose = 1)
+# checkpoint = ModelCheckpoint('best_hybridmodel.h5', save_best_only = True, monitor = 'val_loss', verbose = 1)
 
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall()])
@@ -346,6 +345,8 @@ print(f'{model.metrics_names[0]}: {score[0]}')
 print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
 # print(f'{model.metrics_names[3]}: {score[3]}')
+
+exit()
 
 ######## Save model and tokenizer ##############
 model.save('model/hybrid_model.h5')

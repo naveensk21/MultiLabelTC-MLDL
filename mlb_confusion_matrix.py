@@ -53,7 +53,7 @@ loaded_model2 = load_model('model/cnn_model.h5')
 with open('model/hybrid_tokenizer.pickle', 'rb') as handle:
     loaded_tokenizer = pickle.load(handle)
 
-with open('model/tokenizer.pickle', 'rb') as handle:
+with open('model/hybrid_tokenizer.pickle', 'rb') as handle:
     loaded_tokenizer2 = pickle.load(handle)
 
 # predict a segment text
@@ -113,6 +113,8 @@ def plot_multi_roc(models):
     plt.show()
 
 
+# ref -> https://scikit-learn.org/1.1/auto_examples/model_selection/plot_roc.html
+# plot roc for the loaded model
 def plot_roc():
     y_score = loaded_model.predict(X_test)
     # Learn to predict each class against the other
@@ -227,13 +229,12 @@ def plot_roc():
     # plt.legend(loc="lower right")
     plt.show()
 
-plot_roc()
-exit()
 
 labels = ["".join("label " + str(i)) for i in range(0, 36)]
 
 # ref: https://gist.github.com/shaypal5/94c53d765083101efc0240d776a23823
 # https://stackoverflow.com/questions/62722416/plot-confusion-matrix-for-multilabel-classifcation-python
+
 
 def print_confusion_matrix(confusion_matrix, axes, class_label, class_names, fontsize=8):
 

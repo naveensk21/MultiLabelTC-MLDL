@@ -1,12 +1,14 @@
 import json
 
 dataset_file_path = 'combined_data.json'
+
 # data without 'bad' labels
 clean_dataset_file_path = 'clean_combined_data.json'
 
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
+# set of invalid labels
 invalid_labels = {'The text introduces the policy, a section, or a group of practices, but it does not mention a specific practice.',
                'The text does not fit into our label scheme.',
                'The text describes a specific data practice that is not covered by our label scheme.',
@@ -22,6 +24,7 @@ invalid_labels = {'The text introduces the policy, a section, or a group of prac
                 "The site collects your unspecified information for an unspecified purpose. Collection happens on the website.",
                 "When a change of an unspecified nature is made to the privacy policy, users are notified when visiting the website. Users' choices regarding policy changes are not mentioned or are unclear."}
 
+# collect the labels and policy texts without the invalid labels
 print(f"Original dataset has {len(dataset_json)} entries")
 print(f"Size of invalid labels to remove is: {len(invalid_labels)}")
 clean_dataset = []
@@ -40,6 +43,7 @@ for datapoint in dataset_json:
 print(f"Removed occurances of bad labels: {occurances_of_bad_labels} times from {datapoints_with_bad_labels} datapoints")
 print(f"Clean dataset has {len(clean_dataset)} entries")
 
+# dump the results into a json file
 with open(clean_dataset_file_path, "w") as f:
     json.dump(clean_dataset, f)
     print(f"Stored the clean dataset in {clean_dataset_file_path}")

@@ -27,7 +27,7 @@ def load_policy_segment(policy_name, segment_idx):
   return policy_text_segment
 
 
-# assign the policy text to said segment per file with key: policyname-segment_id
+# assign the policy text to said segment per file with key: policyname-segment_id and
 # value: policy text found at the said segment
 def policy_text_list(policy_name):
   policy_text_list = []
@@ -38,8 +38,6 @@ def policy_text_list(policy_name):
   for i in policy_text_seg:
     count = count + 1
     policy_text_list.append(({f'{policy_name}-{count}': policy_text_seg[count],
-                            # 'segment_id': count,
-                            # 'policy_text': policy_text_seg[count]
                               }))
 
   return policy_text_list
@@ -59,14 +57,13 @@ def load_all_policy_text(path: str):
 
   return data
 
+
 collect_policy_text = load_all_policy_text('dataset/sanitized_policies')
-#
-# with open('collected_policy_text.json', 'w') as fp:
-#   json.dump(collect_policy_text, fp)
+print(collect_policy_text)
 
 
-
-
+with open('collected_policy_text.json', 'w') as fp:
+  json.dump(collect_policy_text, fp)
 
 
 
@@ -103,24 +100,6 @@ def search_add():
 # print(search_add())
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # gets the key from policy_text
 def get_policyname_from_policy_text():
   with open('collected_policy_text.json') as fp:
@@ -130,10 +109,6 @@ def get_policyname_from_policy_text():
     for item in entry:
       for key in item.keys():
         return key
-
-
-
-
 
 
 # load zacks.com.csv label dataset

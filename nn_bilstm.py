@@ -281,8 +281,7 @@ def build_bilstm_model():
 
     model.add(Flatten())
 
-    model.add(Dense(n_classes))
-    model.add(Activation('sigmoid'))
+    model.add(Dense(n_classes, activation='sigmoid'))
 
     return model
 
@@ -298,7 +297,7 @@ opt = keras.optimizers.Adam(learning_rate=lr)
 model = build_bilstm_model()
 
 model.summary()
-# plot_model(model, to_file='cnn_model_plot.png', show_shapes=True, show_layer_names=True)
+# plot_model(model, to_file='figures/bilstm_model_plot_2.png', show_shapes=True, show_layer_names=True)
 
 # compile the model
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[keras.metrics.Precision(), keras.metrics.Recall(), get_f1])
@@ -317,6 +316,8 @@ print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
 print(f'{model.metrics_names[3]}: {score[3]}')
 
+exit()
+
 ######## Save model and tokenizer ##############
 model.save('model/bilstm_model.h5')
 print('saved model to disk')
@@ -325,7 +326,6 @@ with open('model/bilstm_tokenizer.pickle', 'wb') as handle:
     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 print('saved keras tokenizer')
 
-exit()
 ############## Test Model #################
 # load the model
 loaded_model = load_model('model/cnn_model.h5')

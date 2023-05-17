@@ -36,12 +36,12 @@ warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 
 # top x labels file path
-dataset_file_path = 'top_10lb_popular_dataset.json'
+dataset_file_path = 'top_40_labels_dataset.json'
 
 # list of classfiers to test
 classifiers = [
     RandomForestClassifier(n_estimators=200, min_samples_split=2, min_samples_leaf=1, max_depth=50, max_features='auto', random_state=42),
-    LinearSVC(C=1, tol=0.01, random_state=42),
+    LinearSVC(C=16, tol=0.01, random_state=42),
     SVC(C=20, tol=0.003, random_state=42),
     AdaBoostClassifier(n_estimators=200, learning_rate=0.1, random_state=42),
     LogisticRegression(tol=0.01, C=200, random_state=42),
@@ -74,19 +74,24 @@ for classifier in classifiers:
 
     # ----- Preprocessing -----
     # function to strip the html tags
-    def preprocess_texts(text):
+    def preprocess_text(text):
         text = text.lower()
-        text = re.sub(re.compile('<.*?>'), '', text)
-        text = text.translate(str.maketrans('', '', string.punctuation))
+        text = re.sub(re.compile('<.*?>'), '', text) # remove <>
+        text = text.translate(str.maketrans('', '', string.punctuation))  # remove punctuation
+        text = re.sub('\d+', '', text)  # digits
+        text = re.sub(r"\bhttp\w+", "", text)  # remove words that start with http
 
         word_tokens = text.split()
         le = WordNetLemmatizer()
         stop_words = set(stopwords.words("english"))
         word_tokens = [le.lemmatize(w) for w in word_tokens if not w in stop_words]
 
-        cleaned_text = " ".join(word_tokens)
+        cleaned_text = " ".join(word_tokens)  # blank spaces
+        cleaned_text = re.sub(r"\b[a-zA-Z]\b", "", cleaned_text)  # cases
+        cleaned_text = " ".join(cleaned_text.split())
 
         return cleaned_text
+
 
     # def strip_html_tags(text):
     #     text = text.lower() # lower the characters
@@ -95,7 +100,7 @@ for classifier in classifiers:
 
     # map the function to the dataset to strip html tags
     print("Cleaning tags")
-    clean_data = list(map(lambda text: preprocess_texts(text), X))
+    clean_data = list(map(lambda text: preprocess_text(text), X))
     print("Cleaning tags, done")
 
     # MulilabelBinarizer to vectorize the labels
@@ -124,7 +129,7 @@ for classifier in classifiers:
     # each target variable(y1,y2,...) is treated independently and reduced to n classification problems
     # parameters = {'kernel': ('linear', 'rbf'), 'C': [1, 10]}
     start = time.time()
-    wrapper_classifier = LabelPowerset(
+    wrapper_classifier = BinaryRelevance(
         classifier=classifier,
         require_dense=[False, True])
 

@@ -62,15 +62,15 @@ def remove_tags(text):
 
 # transform the predicted labels to original label string
 def get_pred_labels(predicted_labels):
-    # gets all the 36 label
+    # gets all the 36 label and its index
     mlb = [(i, label) for i, label in enumerate(label_classes)]
     # create a temporary list and sorts the probabilities in descending order with the label number.
     sort_predicted_labels = sorted([(i, pred_prob) for i, pred_prob in enumerate(list(predicted_labels))],
                                    key=lambda x: x[1], reverse=True)
     # a list with the predicted probabilities above the cutoff of 0.5
-    label_list = [prob for prob in sort_predicted_labels if prob[1] >= 0.5]
+    pred_label_list = [prob for prob in sort_predicted_labels if prob[1] >= 0.5]
     # list of the the original text labels
-    labels = [label_class[1] for label in label_list[:8] for label_class in mlb if label[0] == label_class[0]]
+    labels = [label_class[1] for label in pred_label_list for label_class in mlb if label[0] == label_class[0]]
 
     return labels
 
@@ -82,7 +82,7 @@ def get_dpv_vocab(predicted_labels):
         if vocabulary in " ".join(predicted_labels):
             dpv = gdpr_vocab.get(vocabulary)
             vocab.append(dpv)
-    return vocab
+    return list(dict.fromkeys(vocab))
 
 
 # function to get the original labels
@@ -111,14 +111,14 @@ def single_predicted_data(text_string):
     return output_data
 
 
-single_data = single_predicted_data("<strong> Email. </strong> <br> <br> You can opt-out from any Meredith email newsletter or commercial email list and prevent the collection of related email response information by our email service providers by using the unsubscribe link at the bottom of each message and/ or by visiting the Email Preferences page on our sites and updating your preferences. If you no longer want to receive third-party email offers that you requested through our Services, simply follow the advertiser's unsubscribe link or opt-out instructions that should be included in every commercial message you receive. <br> <br>")
+single_data = single_predicted_data("If you do not want information collected through the use of cookies, there is a simple procedure in most browsers that allows a user to accept or reject most cookies. Certain cookies that are set when some video products are accessed on our Website, called local shared objects or Flash cookies, may not be managed using the settings in your web browser. Information on managing, accepting and rejecting these cookies is available from Adobe on the Adobe website. If you set your browser or Adobe Flash options not to accept cookies or local shared objects, you may not be able to take advantage of certain Services. <br> <br>")
 
 # display the associated set of labels single privacy policy
 print(single_data)
 
-
-
 exit()
+
+
 # multiple policy_text_predictions
 def multi_predicted_data(model, policy_text):
     output_data = []
@@ -126,19 +126,18 @@ def multi_predicted_data(model, policy_text):
 
     for i, datapoint in enumerate(policy_text):
         output_data.append({'policy_text': remove_tags(X[i]),
-                              'predicted_labels': get_pred_labels(pred[i].tolist()),
-                              'DPV': get_dpv_vocab(get_pred_labels(pred[i].tolist()))})
+                            'predicted_labels': get_pred_labels(pred[i].tolist()),
+                            'DPV': get_dpv_vocab(get_pred_labels(pred[i].tolist()))})
 
     return output_data
 
 
 predicted_data = multi_predicted_data(loaded_model, padded)
-#
+
 # print(predicted_data)
 
-
 # collect the label data into a json
-with open('pred_mapped_data2.json', 'w') as fp:
+with open('pred_mapped_datatset.json', 'w') as fp:
     json.dump(predicted_data, fp)
 
 

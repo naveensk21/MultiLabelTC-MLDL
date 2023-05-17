@@ -59,6 +59,7 @@ def remove_dupl_segme(filename: str):
     new_data_list.sort(key=lambda elem: elem['segment_id'])
     return new_data_list
 
+
 # assign the data pratice category to the segments
 def assigning_category_to_seg(filename: str):
     dictionary_category = get_category_per_file(filename)

@@ -153,6 +153,7 @@ for word in vocab:
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(preprocessed_text)
 
+
 # find the maximum length = 214
 def get_max_len(encoded_text):
     len_all_ptext = []
@@ -205,19 +206,6 @@ for labels in y:
             counters[label] += 1
         else:
             counters[label] = 1
-
-
-# plot bar chart to visualize the distribution of labels (check for imbalance)
-def plot_class_distribution2(count):
-    plt.figure(figsize=(12, 6))
-    values = list(count.values())
-    name = list(count.keys())
-    plt.title('All labels: Distribution of the no. of times a label appeared in a policy text')
-    plt.grid()
-    plt.bar(range(len(count)), values)
-    plt.xlabel('Label numbers. (All 36 labels)')
-    plt.ylabel('No. of times each label appeared in the whole dataset')
-    plt.show()
 
 
 # calculates class weights for label due to label imbalance

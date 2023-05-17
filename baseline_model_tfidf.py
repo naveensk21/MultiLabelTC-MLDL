@@ -28,21 +28,14 @@ from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.model_selection import train_test_split
 
 # Classification
-from sklearn.svm import LinearSVC
-from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression, SGDClassifier
-from sklearn.pipeline import Pipeline
 from skmultilearn.problem_transform import BinaryRelevance, LabelPowerset, ClassifierChain
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.utils import class_weight
-from sklearn.neighbors import KNeighborsClassifier
 
 
 # Evaluation
 import sklearn.metrics as metrics
 from sklearn.metrics import multilabel_confusion_matrix, roc_curve, auc
-from itertools import cycle
-from sklearn.metrics import precision_recall_curve
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 from sklearn.multiclass import OneVsRestClassifier
@@ -52,8 +45,8 @@ from sklearn.metrics import PrecisionRecallDisplay
 
 # top 10 popular labels -> 630 data
 # top 36 labels         -> 1186 data
-# all labels (whole-cl) -> 3065 data
-# all label (pre-cl)    -> 3792
+# all labels (post-cl) -> 3065 data
+# all label (pre-cl)    -> 3792 data
 
 dataset_file_path = 'top_40_labels_dataset.json'
 
@@ -81,10 +74,12 @@ X, y = create_x_y()
 
 # ----- Preprocessing -----
 # function to preprocess the policy text
-def preprocess_texts(text):
+def preprocess_text(text):
     text = text.lower()
     text = re.sub(re.compile('<.*?>'), '', text)
     text = text.translate(str.maketrans('', '', string.punctuation))
+    text = re.sub('\d+', '', text)
+    text = re.sub(r"\bhttp\w+", "", text) # remove words that start with http
 
     word_tokens = text.split()
     le=WordNetLemmatizer()
@@ -92,19 +87,27 @@ def preprocess_texts(text):
     word_tokens = [le.lemmatize(w) for w in word_tokens if not w in stop_words]
 
     cleaned_text = " ".join(word_tokens)
+    cleaned_text = re.sub(r"\b[a-zA-Z]\b", "", cleaned_text)
+    cleaned_text = " ".join(cleaned_text.split())
 
     return cleaned_text
 
 
 # map the function to preprocess the data
-clean_data = list(map(lambda text: preprocess_texts(text), X))
+clean_data = list(map(lambda text: preprocess_text(text), X))
+
+print(f"Original Text: {X[1]}")
+print(f"Cleaned Text: {clean_data[1]}")
+exit()
+
 
 # Use MultilabelBinarizer to vectorize the labels
 mlb = MultiLabelBinarizer()
 y_mlb = mlb.fit_transform(y)
 n_classes = y_mlb.shape[1]
-#  7069 unique labels pre filtering
-# 7056 unique labels post filetering
+
+# print(f"Labels: {y[1]}")
+# print(f"Encoded Labels: {y_mlb[1]}")
 
 # print(mlb.classes_[1000:1500])
 # print(y_mlb[324])
@@ -130,11 +133,13 @@ X_test_tfidf = tfidf.transform(X_test)
 # each target variable(y1,y2,...) is treated independently and reduced to n classification problems
 start=time.time()
 base_classifier = BinaryRelevance(
-    # classifier=RandomForestClassifier(n_estimators=200, min_samples_split=2, min_samples_leaf=1, max_features='auto',
-    #                                   max_depth=50, random_state=42),
-    # classifier=LogisticRegression(C=200, tol=0.01),
-    classifier=LinearSVC(C=13, tol=0.1, dual=False),
-
+    classifier=RandomForestClassifier(n_estimators=200,
+                                      min_samples_split=2,
+                                      min_samples_leaf=1,
+                                      max_features='auto',
+                                      max_depth=50, random_state=42),
+    # classifier=KNeighborsClassifier(n_neighbors=3, weights='distance', leaf_size=40, metric='minkowski'),
+    # classifier=LinearSVC(C=16, tol=0.01, dual=False),
     require_dense=[False, True])
 
 # fit the model
@@ -164,140 +169,60 @@ print('Recall: ', round(br_rec, 3))
 print('F1-score:', round(br_f1, 3))
 print('Hamming Loss:', round(br_hamm, 3))
 
+exit()
 # classification report and confusion matrixs for each label
 print(classification_report(y_test, y_pred, target_names=[f'label-{i}' for i, label in enumerate(mlb.classes_)]))
 confusion = multilabel_confusion_matrix(y_test, y_pred)
 
-def plot_roc_curve():
-    classifier = OneVsRestClassifier(LinearSVC(C=13, tol=0.1))
-    classifier.fit(X_train_tfidf, y_train)
-    y_score = classifier.decision_function(X_test_tfidf)
+# ----------------- gridsearch -----------------
+# grid_param_lsvc = {
+#     'classifier': [BinaryRelevance()],
+#     'classifier__classifier': [LinearSVC()],
+#     'classifier__classifier__C':[1.0, 5.0, 10.0, 15.0, 20.0],
+#     'classifier_classifier__tol': [0.0001, 0.00001, 0.000001, 0.00000001]
+# }
+grid_param_rf = {
+    'classifier__n_estimators': [200, 300, 400, 500, 600],
+    'classifier__min_samples_split': [2, 4, 6],
+    'classifier__min_samples_leaf': [1, 2, 4],
+    'classifier__max_depth': [16, 18, 20, 30, 40, 50]
+    }
 
-    # Compute ROC curve and ROC area for each class
-    fpr = dict()
-    tpr = dict()
-    roc_auc = dict()
-    for i in range(n_classes):
-        fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
-        roc_auc[i] = auc(fpr[i], tpr[i])
+grid_param_knn = {
+    'classifier__n_neighbors': [3,5,7,9,11,13],
+    'classifier__leaf_size' : [20, 30, 40, 50],
+    'classifier__weights' : ['uniform', 'distance'],
+    'classifier__metric' : ['minkowski', 'euclidean', 'manhattan']
+}
 
-    # Compute micro-average ROC curve and ROC area
-    fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
-    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+grid_param_lr = {
+    'classifier__tol': [0.1, 0.01, 0.001, 0.0001],
+    'classifier__C': [x for x in range(400)]
+}
 
-    plt.figure()
-    lw = 2  # line_width
-    plt.plot(fpr[3], tpr[3], color='darkorange',
-             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc[3])  # Drawing Curve according to 3. class
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('ROC')
-    plt.legend(loc="lower right")
-    plt.show()
+grid_param_svm = {
+    'classifier__tol': [0.1, 0.01, 0.001, 0.0001],
+    'classifier__C': [x for x in range(200)]
+}
 
-    # Process of plotting roc-auc curve belonging to all classes.
-    # First aggregate all false positive rates
-    all_fpr = np.unique(np.concatenate([fpr[i] for i in range(n_classes)]))
 
-    # Then interpolate all ROC curves at this points
-    mean_tpr = np.zeros_like(all_fpr)
-    for i in range(n_classes):
-        mean_tpr += np.interp(all_fpr, fpr[i], tpr[i])
+def grid_search(params):
+    clf = GridSearchCV(base_classifier, param_grid=params, cv=3,  scoring='f1_micro')
+    return clf
 
-    # Finally average it and compute AUC
-    mean_tpr /= n_classes
 
-    fpr["macro"] = all_fpr
-    tpr["macro"] = mean_tpr
-    roc_auc["macro"] = auc(fpr["macro"], tpr["macro"])
+def random_search(params):
+    clf = RandomizedSearchCV(estimator=base_classifier, param_distributions=params, cv=5, n_iter=50, n_jobs=-1)
+    return clf
 
-    # Plot all ROC curves
-    plt.figure()
-    plt.plot(
-        fpr["micro"],
-        tpr["micro"],
-        label="micro-average ROC curve (area = {0:0.2f})".format(roc_auc["micro"]),
-        color="deeppink",
-        linestyle=":",
-        linewidth=4,
-    )
 
-    plt.plot(
-        fpr["macro"],
-        tpr["macro"],
-        label="macro-average ROC curve (area = {0:0.2f})".format(roc_auc["macro"]),
-        color="navy",
-        linestyle=":",
-        linewidth=4,
-    )
+clf = grid_search(grid_param_svm)
+# clf = random_search(grid_param_svm)
+clf.fit(X_train_tfidf, y_train)
+print('Retrieving best parameters....')
+print(clf.best_params_)
 
-    colors = cycle(["aqua", "darkorange", "cornflowerblue", "lightcoral", "maroon"])
-    for i, color in zip(range(n_classes), colors):
-        plt.plot(
-            fpr[i],
-            tpr[i],
-            color=color,
-            lw=lw,
-            label="ROC curve of class {0} (area = {1:0.2f})".format(i, roc_auc[i]),
-        )
-
-    plt.plot([0, 1], [0, 1], "k--", lw=lw)
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title("Some extension of Receiver operating characteristic to multiclass")
-    # plt.legend(loc="lower right")
-    plt.show()
-
-plot_roc_curve()
 exit()
-
-
-# plot roc for multiple models
-def plot_multi_roc_ml(models, X_train, Y_train, X_test):
-    plt.figure(0).clf()
-    for model in models:
-        wrapper_classifier = OneVsRestClassifier(model)
-
-        wrapper_classifier.fit(X_train, Y_train)
-        y_score = wrapper_classifier.decision_function(X_test)
-
-        # Compute ROC curve and ROC area for each class
-        fpr = dict()
-        tpr = dict()
-        roc_auc = dict()
-        for i in range(len(mlb.classes_)):
-            fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
-            roc_auc[i] = auc(fpr[i], tpr[i])
-
-        # Compute micro-average ROC curve and ROC area
-        fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
-        roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
-
-        lw = 2  # line_width
-        plt.plot(fpr[3], tpr[3], color='darkorange',
-                 lw=lw, label=f'{type(model).__name__} (area = %0.2f)' % roc_auc[3])  # Drawing Curve according to 3. class
-        plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-
-
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('ROC')
-    plt.legend(loc="lower right")
-    plt.show()
-
-
-# plot_multi_roc_ml([LinearSVC(tol=0.1, C=13),
-#                    LogisticRegression(tol=0.01, C=200, random_state=42)],
-#                   X_train_tfidf, y_train, X_test_tfidf)
-
-
 
 
 # confusion matrix definition
@@ -330,8 +255,8 @@ for axes, cfs_matrix, label in zip(ax.flatten(), vis_array, labels):
     print_confusion_matrix(cfs_matrix, axes, label, ["N", "Y"])
 
 fig.tight_layout()
-# fig.savefig("image2.png")
-plt.show()
+# # fig.savefig("image2.png")
+# plt.show()
 
 
 # ref: https://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
@@ -365,72 +290,11 @@ def plot_pr_curve():
     plt.show()
 
 
-# ----- gridsearch ------
-# grid_param_lsvc = {
-#     'classifier': [BinaryRelevance()],
-#     'classifier__classifier': [LinearSVC()],
-#     'classifier__classifier__C':[1.0, 5.0, 10.0, 15.0, 20.0],
-#     'classifier_classifier__tol': [0.0001, 0.00001, 0.000001, 0.00000001]
-# }
-grid_param_rf = {
-    'classifier__n_estimators': [200, 300, 400, 500, 600],
-    'classifier__min_samples_split': [2, 4, 6],
-    'classifier__min_samples_leaf': [1, 2, 4],
-    'classifier__max_depth': [16, 18, 20, 30, 40, 50]
-    }
-
-grid_param_knn = {
-    'classifier__n_neighbors': [3,5,7,9,11,13],
-    'classifier__leaf_size' : [20, 30, 40, 50],
-    'classifier__weights' : ['uniform', 'distance'],
-    'classifier__metric' : ['minkowski', 'euclidean', 'manhattan']
-}
-
-grid_param_lr = {
-    'classifier__tol': [0.1, 0.01, 0.001, 0.0001],
-    'classifier__C': [x for x in range(400)]
-}
-
-grid_param_svm = {
-    'classifier__tol': [0.1, 0.01, 0.001, 0.0001],
-    'classifier__C': [x for x in range(500)]
-}
-
-
-def grid_search(params):
-    clf = GridSearchCV(base_classifier, param_grid=params, cv=3,  scoring='f1_micro')
-    return clf
-
-
-def random_search(params):
-    clf = RandomizedSearchCV(estimator=base_classifier, param_distributions=params, cv=5, n_iter=50, n_jobs=-1)
-    return clf
-
-
-# clf = grid_search(grid_param_svm)
-clf = random_search(grid_param_svm)
-clf.fit(X_train_tfidf, y_train)
-print('Retrieving best parameters....')
-print(clf.best_params_)
-
-
 # load the model from disk
 # loaded_model = pickle.load(open(filename, 'rb'))
 # result = loaded_model.score(X_test_tfidf, y_test)
 # print(result)
 
-
-
-# classifier=LinearSVC(C=386, tol=0.1, dual=False),
-# Precision:  0.736
-# Recall:  0.486
-# F1-score: 0.585
-# Hamming Loss: 0.028
-
-# classifier=LinearSVC(C=98, tol=0.1, dual=False),
-# Precision:  0.725
-# Recall:  0.503
-# F1-score: 0.594
 
 
 
