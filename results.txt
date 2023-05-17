@@ -1,0 +1,635 @@
+################### Results for top 40 labels ####################
+-------------------------------------------------
+Multiple Baseline Model-word2vec (Binary Relevance)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Binary Relevance Precision:  0.509
+Binary Relevance Recall:  0.244
+Binary Relevance F1-score: 0.305
+Binary Relevance Hamming Loss: 0.033
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Binary Relevance Precision:  0.367
+Binary Relevance Recall:  0.3
+Binary Relevance F1-score: 0.243
+Binary Relevance Hamming Loss: 0.068
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+Binary Relevance Precision:  0.222
+Binary Relevance Recall:  0.163
+Binary Relevance F1-score: 0.181
+Binary Relevance Hamming Loss: 0.035
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Binary Relevance Precision:  0.536
+Binary Relevance Recall:  0.336
+Binary Relevance F1-score: 0.381
+Binary Relevance Hamming Loss: 0.038
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Binary Relevance Precision:  0.549
+Binary Relevance Recall:  0.251
+Binary Relevance F1-score: 0.311
+Binary Relevance Hamming Loss: 0.034
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+Binary Relevance Precision:  0.315
+Binary Relevance Recall:  0.269
+Binary Relevance F1-score: 0.235
+Binary Relevance Hamming Loss: 0.064
+
+Classifier: <class 'sklearn.neighbors._classification.KNeighborsClassifier'>
+Binary Relevance Precision:  0.419
+Binary Relevance Recall:  0.336
+Binary Relevance F1-score: 0.347
+Binary Relevance Hamming Loss: 0.042
+
+-------------------------------------------------
+Multiple Baseline Model-word2vec (Classifier Chain)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+ClassifierChain Precision:  0.519
+ClassifierChain Recall:  0.272
+ClassifierChain F1-score: 0.319
+ClassifierChain Hamming Loss: 0.032
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+ClassifierChain Precision:  0.315
+ClassifierChain Recall:  0.293
+ClassifierChain F1-score: 0.237
+ClassifierChain Hamming Loss: 0.051
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+ClassifierChain Precision:  0.301
+ClassifierChain Recall:  0.252
+ClassifierChain F1-score: 0.232
+ClassifierChain Hamming Loss: 0.038
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+ClassifierChain Precision:  0.464
+ClassifierChain Recall:  0.322
+ClassifierChain F1-score: 0.364
+ClassifierChain Hamming Loss: 0.037
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+ClassifierChain Precision:  0.382
+ClassifierChain Recall:  0.261
+ClassifierChain F1-score: 0.265
+ClassifierChain Hamming Loss: 0.041
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+ClassifierChain Precision:  0.237
+ClassifierChain Recall:  0.206
+ClassifierChain F1-score: 0.173
+ClassifierChain Hamming Loss: 0.054
+
+Classifier: <class 'sklearn.neighbors._classification.KNeighborsClassifier'>
+Binary Relevance Precision:  0.288
+Binary Relevance Recall:  0.169
+Binary Relevance F1-score: 0.265
+Binary Relevance Hamming Loss: 0.017
+
+
+-------------------------------------------------
+Multiple Baseline Model-word2vec (Label Powerset)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Label Powerset Precision:  0.463
+Label Powerset Recall:  0.352
+Label Powerset F1-score: 0.352
+Label Powerset Hamming Loss: 0.039
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Label Powerset Precision:  0.167
+Label Powerset Recall:  0.151
+Label Powerset F1-score: 0.107
+Label Powerset Hamming Loss: 0.091
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+Label Powerset Precision:  0.37
+Label Powerset Recall:  0.333
+Label Powerset F1-score: 0.324
+Label Powerset Hamming Loss: 0.041
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Label Powerset Precision:  0.306
+Label Powerset Recall:  0.135
+Label Powerset F1-score: 0.149
+Label Powerset Hamming Loss: 0.054
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Label Powerset Precision:  0.432
+Label Powerset Recall:  0.383
+Label Powerset F1-score: 0.391
+Label Powerset Hamming Loss: 0.041
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+Label Powerset Precision:  0.305
+Label Powerset Recall:  0.264
+Label Powerset F1-score: 0.243
+Label Powerset Hamming Loss: 0.055
+
+
+-------------------------------------------------
+Multiple Baseline Model-tfidf (Binary Relevance)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Binary Relevance Precision:  0.201
+Binary Relevance Recall:  0.044
+Binary Relevance F1-score: 0.144
+Binary Relevance Hamming Loss: 0.016
+
+# Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Binary Relevance Precision:  0.344
+Binary Relevance Recall:  0.195
+Binary Relevance F1-score: 0.328
+Binary Relevance Hamming Loss: 0.017
+
+# Classifier: <class 'sklearn.svm._classes.SVC'>
+Binary Relevance Precision:  0.376
+Binary Relevance Recall:  0.119
+Binary Relevance F1-score: 0.25
+Binary Relevance Hamming Loss: 0.015
+
+# Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Binary Relevance Precision:  0.429
+Binary Relevance Recall:  0.193
+Binary Relevance F1-score: 0.318
+Binary Relevance Hamming Loss: 0.016
+
+# Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Binary Relevance Precision:  0.413
+Binary Relevance Recall:  0.161
+Binary Relevance F1-score: 0.309
+Binary Relevance Hamming Loss: 0.014
+
+
+-------------------------------------------------
+Baseline Model tf-idf (RandomForest)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Precision:  0.59
+Recall:  0.157
+F1-score: 0.305
+Hamming Loss: 0.031
+
+
+-------------------------------------------------
+Baseline Model Word2vec (RandomForest)
+-------------------------------------------------
+# Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Precision: 0.524
+Recall:  0.252
+F1-score: 0.371
+Hamming Loss: 0.032
+
+
+-------------------------------------------------
+cnn network
+-------------------------------------------------
+
+# # bs-16, lr-0.001, dp-0.6-0.6, conv-160,4
+-------------------------
+loss: 0.14787784218788147
+precision: 0.5360000133514404
+recall: 0.5775862336158752
+c_f1: 0.5729897022247314
+--------------------------
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,4
+loss: 0.0927027016878128
+precision: 0.5697329640388489
+recall: 0.5714285969734192
+c_f1: 0.5692447423934937
+
+#bs-16, lr-0.001, dp-0.6-0.6, conv-183,3
+loss: 0.29696816205978394
+precision: 0.3586800694465637
+recall: 0.6983240246772766
+c_f1: 0.47736337780952454
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,5, conv1-220,5
+precision: 0.6067073345184326
+recall: 0.5751445293426514
+get_f1: 0.5829235315322876
+
+
+#bs-16, lr-0.01, dp-0.5-0.5, conv1-220,3, conv1-220,3
+loss: 0.10056645423173904
+precision: 0.5894736647605896
+recall: 0.6363636255264282
+c_f1: 0.6027687191963196
+
+optuna: Trial 22 finished with value: 0.5630239248275757 and parameters: {'n_layers': 2, 'dropout': 0.057091867380322646,
+'filters': 38, 'kernel_sizes': 4, 'strides': 1,
+'filters0': 221, 'kernel_sizes0': 3, 'strides0': 2, 'dropout0': 0.3474126836787301,
+'filters1': 239, 'kernel_sizes1': 3, 'strides1': 1, 'dropout1': 0.0001691711045728704,
+'learning_rate': 0.0009895651135503852, 'size': 8}.
+
+-------------------------------------------------
+Shallow Model
+-------------------------------------------------
+best f1 score:
+Trial 33 finished with value: 0.4393022060394287 and parameters: {'n_layers': 2, 'dropout': 0.18856839437923495, 'n_units_l0': 393, 'dropout0': 0.5016000407888777, 'n_units_l1': 331, 'dropout1': 0.5582626952033339, 'learning_rate': 0.0002583387933114043, 'size': 42}.
+
+
+-------------------------------------------------
+Bidirectional-LSTM or LSTM-CNN Model
+-------------------------------------------------
+##bidire 128-dp:0.7, 135-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_3: 0.5907335877418518
+recall_3: 0.4540059268474579
+c_f1: 0.5109829306602478
+
+
+#bidirectional 185-dp: 0.6 190-dp:0.6  bs-12 lr-0.0001
+precision_12: 0.49497488141059875
+recall_12: 0.5533707737922668
+c_f1: 0.5215594172477722
+
+#bidire 128-dp:0.7, 128-dp:0.7   bs:16 lr-0.001
+precision: 0.6168582439422607
+recall: 0.47774481773376465
+c_f1: 0.5344550609588623
+
+#bidire 32-dp:0.7, 128-dp:0.7   bs:16 lr-0.001
+precision_3: 0.5379746556282043
+recall_3: 0.5044510364532471
+c_f1: 0.5078116655349731
+
+##bidire 16-dp:0.7, 128-dp:0.7   bs:16 lr-0.001
+precision_4: 0.5014084577560425
+recall_4: 0.5281898975372314
+c_f1: 0.5054097771644592
+
+##bidire 16-dp:0.7, 64-dp:0.7   bs:16 lr-0.001
+precision_5: 0.528124988079071
+recall_5: 0.501483678817749
+c_f1: 0.49487948417663574
+
+##bidire 16-dp:0.7, 88-dp:0.7   bs:16 lr-0.001
+precision_6: 0.555891215801239
+recall_6: 0.5459940433502197
+c_f1: 0.546823263168335
+
+
+##bidire 16-dp:0.7, 82-dp:0.7   bs:16 lr-0.001
+precision_8: 0.5
+recall_8: 0.5934718251228333
+c_f1: 0.5286514163017273
+
+
+##bidire 16-dp:0.7, 78-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_12: 0.5432098507881165
+recall_12: 0.5222551822662354
+c_f1: 0.5204870104789734
+
+##bidire 16-dp:0.7, 68-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_17: 0.5488505959510803
+recall_17: 0.5667656064033508
+c_f1: 0.5569500923156738
+
+# bidire 13-dp:0.7, 53-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_25: 0.5074626803398132
+recall_25: 0.6053412556648254
+c_f1: 0.5440539717674255
+
+# bidire 16-dp:0.7, 46-dp:0.7   bs:16 lr-0.001 dp-0.6
+precision_29: 0.47152620553970337
+recall_29: 0.6142433285713196
+c_f1: 0.5269097685813904
+
+
+# lstm 16-dp:0.7, 77-dp:0.7   bs:16 lr-0.001 dp-0.6
+loss: 0.17884834110736847
+precision_10: 0.5451807379722595
+recall_10: 0.5084269642829895
+c_f1: 0.5114240050315857
+
+
+-------------------------------
+#Hybrid MOdel (bs-16, lr-0.001, epoch-25)
+--------------------------------
+# drop 0.6, conv1d-220(3), bidir-220(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.08875548094511032
+precision_9: 0.5617647171020508
+recall_9: 0.602523684501648
+c_f1: 0.5983261466026306
+
+# drop 0.6, conv1d-64(3), bidir-128(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.09808946400880814
+precision_8: 0.5068492889404297
+recall_8: 0.5835962295532227
+c_f1: 0.5603612065315247
+
+
+# drop 0.4, conv1d-64(3), bidir-128(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.09386708587408066
+precision_10: 0.573913037776947
+recall_10: 0.624605655670166
+c_f1: 0.6149471998214722
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4), GlobalMaxPool1D,  Dense(128)
+loss: 0.09148261696100235
+precision_12: 0.5861027240753174
+recall_12: 0.6119873523712158
+c_f1: 0.6155158877372742
+
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4),bidir-256(drop-0.3) GlobalMaxPool1D,  Dense(128)
+loss: 0.10309144854545593
+precision_24: 0.5494505763053894
+recall_24: 0.6309148073196411
+c_f1: 0.603750467300415
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4),bidir-256(drop-0.3) GlobalMaxPool1D,  Dense(32)
+loss: 0.08229336142539978
+precision_28: 0.6423357725143433
+recall_28: 0.5552050471305847
+c_f1: 0.5955923199653625
+
+# drop 0.3, conv1d-64(3), bidir-128(drop-0.4),bidir-256(drop-0.3) GlobalMaxPool1D,  Dense(220)
+loss: 0.09737812727689743
+precision_34: 0.5656836628913879
+recall_34: 0.6656151413917542
+c_f1: 0.6223028302192688
+
+
+# -------------top 10 popular labels----------------
+Classifier: <class 'sklearn.ensemble._forest.RandomForestClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 3.31 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.974
+Binary Relevance Recall:  0.521
+Binary Relevance F1-score: 0.679
+Binary Relevance Hamming Loss: 0.056
+
+Classifier: <class 'sklearn.svm._classes.LinearSVC'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.07 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.777
+Binary Relevance Recall:  0.676
+Binary Relevance F1-score: 0.723
+Binary Relevance Hamming Loss: 0.057
+
+Classifier: <class 'sklearn.svm._classes.SVC'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.47 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.955
+Binary Relevance Recall:  0.571
+Binary Relevance F1-score: 0.715
+Binary Relevance Hamming Loss: 0.053
+
+Classifier: <class 'sklearn.ensemble._weight_boosting.AdaBoostClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 6.07 seconds
+prediction time taken.... 1.0 seconds
+Binary Relevance Precision:  0.888
+Binary Relevance Recall:  0.682
+Binary Relevance F1-score: 0.772
+Binary Relevance Hamming Loss: 0.048
+
+Classifier: <class 'sklearn.linear_model._logistic.LogisticRegression'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.19 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.917
+Binary Relevance Recall:  0.654
+Binary Relevance F1-score: 0.763
+Binary Relevance Hamming Loss: 0.049
+
+Classifier: <class 'sklearn.linear_model._stochastic_gradient.SGDClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.01 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.842
+Binary Relevance Recall:  0.701
+Binary Relevance F1-score: 0.765
+Binary Relevance Hamming Loss: 0.049
+
+Classifier: <class 'sklearn.neighbors._classification.KNeighborsClassifier'>
+Cleaning tags
+Cleaning tags, done
+training time taken: 0.01 seconds
+prediction time taken.... 0.0 seconds
+Binary Relevance Precision:  0.797
+Binary Relevance Recall:  0.694
+Binary Relevance F1-score: 0.742
+Binary Relevance Hamming Loss: 0.056
+
+
+--------------------------------------------------------
+Results from classifiying the data practices as labels
+--------------------------------------------------------
+
+CNN Model
+---------
+# Conv1d-64
+loss: 0.3834798038005829
+precision: 0.7540322542190552
+recall: 0.6732673048973083
+get_f1: 0.7186695337295532
+
+#drop-0.6 Conv1d-64 drop-0.6 conv1d-128 drop-0.6 conv1d-128
+loss: 0.2663356065750122
+precision: 0.7713696956634521
+recall: 0.6909593939781189
+get_f1: 0.7332054376602173
+
+
+# Conv1d-128
+loss: 0.38435038924217224
+precision: 0.7459095120429993
+recall: 0.7000903487205505
+get_f1: 0.7261269688606262
+
+#drop-0.6 Conv1d-128
+loss: 0.2608160376548767
+precision: 0.7868338823318481
+recall: 0.6747311949729919
+get_f1: 0.730289936065673
+
+#drop-0.6 Conv1d-128 drop-0.6 conv1d-64
+loss: 0.3067905604839325
+precision: 0.7282809615135193
+recall: 0.7229357957839966
+get_f1: 0.7253777384757996
+
+
+#drop-0.6 Conv1d-220 drop-0.6 conv1d-220
+precision: 0.7863741517066956
+recall: 0.6085790991783142
+get_f1: 0.6850076913833618
+
+
+#drop-0.6 Conv1d-220 drop-0.6 conv1d-220
+precision_1: 0.7156521677970886
+recall_1: 0.7434507608413696
+c_f1: 0.7242441177368164
+
+#drop-0.6 Conv1d-128, drop-0.6 conv1d-128, drop-0.6 conv1d-164
+loss: 0.26514407992362976
+precision_2: 0.7366071343421936
+recall_2: 0.7452574372291565
+c_f1: 0.7427158355712891
+
+
+
+CNN-LSTM
+--------
+#drop-0.6 Conv1d-64, BiLSTM-128(0.7), Dense-64
+loss: 0.2991151213645935
+precision_11: 0.7147541046142578
+recall_11: 0.7877145409584045
+c_f1: 0.7581914663314819
+
+#drop-0.6 Conv1d-128, BiLSTM-64(0.7), Dense-64
+loss: 0.4042056202888489
+precision_12: 0.7569060921669006
+recall_12: 0.7425474524497986
+c_f1: 0.7504614591598511
+
+#spatialdrop-0.5 Conv1d-64, BiLSTM-64(0.7),BiLSTM-32(0.7) Dense-32
+loss: 0.3655598759651184
+precision_5: 0.7550644278526306
+recall_5: 0.7488584518432617
+c_f1: 0.755763828754425
+
+#drop-0.6 Conv1d-128, BiLSTM-128(0.7), Dense-64
+loss: 0.4588524103164673
+precision_14: 0.7435232996940613
+recall_14: 0.7777777910232544
+c_f1: 0.7606516480445862
+
+#drop-0.6 Conv1d-64, BiLSTM-64(0.7),BiLSTM-64(0.7) Dense-128
+loss: 0.2910599708557129
+precision_23: 0.7838364243507385
+recall_23: 0.7271906137466431
+c_f1: 0.758427083492279
+
+
+--- Study statistics --- Hybrid Model --------
+Number of completed trials: 50
+Trial Number: 16
+Metric: [0.8307349681854248, 0.7095890641212463, 0.7749279141426086]
+Params
+   dropout0: 0.5426020879151837
+   filters1: 243
+   kernel_sizes1: 2
+   strides1: 1
+   units1: 77
+   dropout1: 0.11456688355992571
+   units3: 303
+   learning_rate: 0.001374437494986253
+   size: 61
+
+Trial Number: 29
+Metric: [0.8993710875511169, 0.6739726066589355, 0.7329486608505249]
+Params
+   dropout0: 0.02480831008268647
+   filters1: 237
+   kernel_sizes1: 3
+   strides1: 2
+   units1: 246
+   dropout1: 0.351061698587664
+   units3: 59
+   learning_rate: 2.0977021050737236e-05
+   size: 17
+
+Trial Number: 37
+Metric: [0.8429319262504578, 0.7324200868606567, 0.7747049331665039]
+Params
+   dropout0: 0.020175637366060893
+   filters1: 312
+   kernel_sizes1: 4
+   strides1: 1
+   units1: 302
+   dropout1: 0.1503171702611922
+   units3: 341
+   learning_rate: 0.0027332525999280224
+   size: 77
+
+Trial Number: 41
+Metric: [1.0, 0.6100456714630127, 0.6808467507362366]
+Params
+   dropout0: 0.44969288559373977
+   filters1: 69
+   kernel_sizes1: 4
+   strides1: 1
+   units1: 162
+   dropout1: 0.6555975474509083
+   units3: 10
+   learning_rate: 4.370294163755596e-05
+   size: 59
+
+Hybrid 2.0
+Trial Number: 15
+Metric: [0.9003496766090393, 0.7705357074737549, 0.7280663251876831]
+Params
+   filters1: 184
+   kernel_sizes1: 3
+   strides1: 1
+   units1: 135
+   dropout1: 0.1262064160849212
+   units2: 177
+   dropout2: 0.3563906793553285
+   learning_rate: 0.0002426021803432712
+   size: 77
+
+Trial Number: 13
+Metric: [0.8026756048202515, 0.7857142686843872, 0.7232199907302856]
+Params
+   filters1: 210
+   kernel_sizes1: 3
+   strides1: 2
+   units1: 368
+   dropout1: 0.29560083099580325
+   units2: 364
+   dropout2: 0.28794689888026287
+   learning_rate: 2.499723518105788e-05
+   size: 49
+
+Trial Number: 6
+Metric: [0.8095238208770752, 0.8374999761581421, 0.7135106921195984]
+Params
+   filters1: 257
+   kernel_sizes1: 4
+   strides1: 2
+   units1: 111
+   dropout1: 0.16450967848218637
+   units2: 47
+   dropout2: 0.4364980280026683
+   learning_rate: 0.00010962647509526952
+   size: 113
+
+
+# LSTM OPTUNA
+Trial 53 finished with values: [0.8117154836654663, 0.7362020611763, 0.7601026892662048] and parameters: {'n_layers': 4, 'units0': 386, 'dropout0': 0.17437659597442606, 'units1': 32, 'dropout1': 0.44308574813525486, 'units2': 266, 'dropout2': 0.023491378564615615, 'units3': 113, 'dropout3': 0.15206135645379792, 'learning_rate': 0.002386767999388415, 'size': 41}.
+
+Trial 0 finished with values: [0.8416347503662109, 0.7146866321563721, 0.7466397881507874] and parameters: {'n_layers': 4, 'units0': 386, 'dropout0': 0.18014209484810273, 'units1': 90, 'dropout1': 0.09421391929811088, 'units2': 87, 'dropout2': 0.1689504884005337, 'units3': 392, 'dropout3': 0.6681930531951811, 'learning_rate': 0.002386767999388415, 'size': 94}
+
+# CNN OPTUNA
+Trial 47 finished with values: [0.8010269403457642, 0.7033976316452026, 0.7313387393951416] and parameters: {'n_layers': 3, 'dropout': 0.6538823879661368, 'filters0': 55, 'kernel_sizes0': 3, 'strides0': 1, 'dropout0': 0.5982219283179924, 'filters1': 188, 'kernel_sizes1': 4, 'strides1': 1, 'dropout1': 0.4038493755329198, 'filters2': 246, 'kernel_sizes2': 4, 'strides2': 2, 'dropout2': 0.1451702318810265, 'learning_rate': 0.0021885048355969067, 'size': 60}.
+
+Trial 32 finished with values: [0.7913340926170349, 0.7309458255767822, 0.7308201789855957] and parameters: {'n_layers': 1, 'dropout': 0.1891366425883495, 'filters0': 176, 'kernel_sizes0': 2, 'strides0': 2, 'dropout0': 0.19385108279263957, 'learning_rate': 0.002421104009237147, 'size': 81}
+
+Trial 24 finished with values: [0.7909091114997864, 0.8007346391677856, 0.6027069687843323] and parameters: {'n_layers': 1, 'dropout': 0.31721626706066125, 'filters0': 117, 'kernel_sizes0': 2, 'strides0': 2, 'dropout0': 0.3037029652112373, 'learning_rate': 3.812967075516252e-05, 'size': 128}
+
+ Trial 9 finished with values: [0.8231046795845032, 0.7309458255767822, 0.7435720562934875] and parameters: {'n_layers': 3, 'dropout': 0.5626045576017299, 'filters0': 14, 'kernel_sizes0': 3, 'strides0': 2, 'dropout0': 0.19902599962174317, 'filters1': 398, 'kernel_sizes1': 2, 'strides1': 1, 'dropout1': 0.31227367301980513, 'filters2': 269, 'kernel_sizes2': 3, 'strides2': 2, 'dropout2': 0.43736220462031083, 'learning_rate': 0.0018113102485168044, 'size': 33}
+
+Trial 31 finished with values: [0.8390804529190063, 0.7033976316452026, 0.749394953250885] and parameters: {'dropout0': 0.32878254431384385, 'filters0': 140, 'kernel_sizes0': 3, 'strides0': 1, 'dropout1': 0.2744325548277607, 'filters1': 364, 'kernel_sizes1': 4, 'strides1': 1, 'learning_rate': 0.0009826148319153178, 'size': 73}.
+
+Trial 23 finished with values: [0.8024193644523621, 0.7346189022064209, 0.7577032446861267] and parameters: {'dropout0': 0.549135103102723, 'filters0': 120, 'kernel_sizes0': 3, 'strides0': 1, 'dropout1': 0.27653915265559365, 'filters1': 82, 'kernel_sizes1': 2, 'strides1': 1, 'learning_rate': 0.005728855949693471, 'size': 120}
+
+Trial 37 finished with values: [0.8306074738502502, 0.6776859760284424, 0.7402566075325012] and parameters: {'dropout0': 0.41271794919306404, 'filters0': 27, 'kernel_sizes0': 2, 'strides0': 1, 'dropout1': 0.1777580912065194, 'filters1': 243, 'kernel_sizes1': 4, 'strides1': 2, 'dropout2': 0.19590833705285707, 'filters2': 343, 'kernel_sizes2': 5, 'strides2': 1, 'learning_rate': 0.007711811694114434, 'size': 43}.
+
+
