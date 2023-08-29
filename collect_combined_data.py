@@ -50,8 +50,8 @@ def combined_data():
 joined_data = combined_data()
 
 # dump the data into json file
-# with open('combined_data.json', 'w') as fp:
-#     json.dump(joined_data, fp)
+with open('combined_data.json', 'w') as fp:
+    json.dump(joined_data, fp)
 
 
 

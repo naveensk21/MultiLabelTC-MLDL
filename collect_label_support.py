@@ -7,7 +7,7 @@ clean_dataset_file_path = 'clean_combined_data.json'
 label_support_file_path = 'label_support.json'
 
 # load dataset with the data practice category
-with open('zclean_combined_data_wcategory.json') as fp:
+with open('label_dataset/zclean_combined_data_wcategory.json') as fp:
     category_dataset = json.load(fp)
 
 # load the clean dataset

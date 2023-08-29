@@ -295,7 +295,7 @@ def build_cnn_model():
 
 # params
 start = time.time()
-epoch = 25
+epoch = 5
 batch_size = 16
 lr = 0.001
 opt = keras.optimizers.Adam(learning_rate=lr)
@@ -322,7 +322,6 @@ print(f'{model.metrics_names[1]}: {score[1]}')
 print(f'{model.metrics_names[2]}: {score[2]}')
 print(f'{model.metrics_names[3]}: {score[3]}')
 
-exit()
 
 ######## Save model and tokenizer ##############
 # model.save('cnn_model.h5')
@@ -365,6 +364,8 @@ def plot_history(history):
     plt.show()
 
 plot_history(history)
+
+exit()
 
 
 ############## Test Model #################

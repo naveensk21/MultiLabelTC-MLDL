@@ -12,7 +12,7 @@ with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
 # gppr vocab path
-gdpr_dataset_path = 'dpv_vocab.json'
+gdpr_dataset_path = '../dpv_vocab.json'
 with open(gdpr_dataset_path) as fp:
     gdpr_vocab = json.load(fp)
 
@@ -42,7 +42,7 @@ label_classes = mlb.classes_
 print(label_classes)
 
 # load the model
-loaded_model = load_model('model/zcnn_model.h5')
+loaded_model = load_model('../model/zcnn_model.h5')
 
 # load tokenizer
 with open('ztokenizer.pickle', 'rb') as handle:

@@ -12,6 +12,7 @@ def get_files_from_path(path: str) -> list:
     return all_files
 
 
+# load a single csv file
 def load_csv_file(filename: str) -> list:
     data = []
     file_path = f'dataset/annotations/{filename}'
@@ -60,7 +61,7 @@ def remove_dupl_segme(filename: str):
     return new_data_list
 
 
-# assign the data pratice category to the segments
+# assign the data-pratice category to the segments
 def assigning_category_to_seg(filename: str):
     dictionary_category = get_category_per_file(filename)
     file_array_list = remove_dupl_segme(filename)

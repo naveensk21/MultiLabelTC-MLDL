@@ -34,13 +34,16 @@ def policy_text_list(policy_name):
   policy_text = load_policy_by_name(policy_name)
   policy_text_seg = policy_text.split('|||')
 
-  count = 0 - 1
+  count = -1
   for i in policy_text_seg:
     count = count + 1
     policy_text_list.append(({f'{policy_name}-{count}': policy_text_seg[count],
                               }))
 
   return policy_text_list
+
+print(policy_text_list('vikings'))
+exit()
 
 
 # load all the policy text for all the files
@@ -65,6 +68,7 @@ print(collect_policy_text)
 with open('collected_policy_text.json', 'w') as fp:
   json.dump(collect_policy_text, fp)
 
+exit()
 
 
 #============================== Testting ground =======================================
