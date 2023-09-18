@@ -18,33 +18,51 @@ ML Model Results
 |  K-NN |    0.59   |  0.41  |   0.48   |    0.48   |  0.47  |   0.48   |    0.51   |  0.54  |   0.50   |
 
 
-<table class="tg">
+<table>
 <thead>
   <tr>
-    <th class="tg-0pky"></th>
-    <th class="tg-0pky">Binary Relevance</th>
-    <th class="tg-0pky">Classifier Chain</th>
-    <th class="tg-0pky">Label Powerset</th>
+    <th></th>
+    <th colspan="3">Binary Relevance</th>
+    <th colspan="3">Classifier Chains</th>
+    <th colspan="3">Label Powerset</th>
   </tr>
 </thead>
 <tbody>
   <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky">Precision <br></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
+    <td></td>
+    <td>Precision</td>
+    <td>Recall</td>
+    <td>F1-Score</td>
+    <td>Precision</td>
+    <td>Recall</td>
+    <td>F1-Score</td>
+    <td>Precision</td>
+    <td>Recall</td>
+    <td>F1-Score</td>
   </tr>
   <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
+    <td>SVM</td>
+    <td>0.73</td>
+    <td>0.46</td>
+    <td>0.56</td>
+    <td>0.66</td>
+    <td>0.43</td>
+    <td>0.52</td>
+    <td>0.53</td>
+    <td>0.47</td>
+    <td>0.50</td>
   </tr>
   <tr>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
-    <td class="tg-0pky"></td>
+    <td>LR</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
   </tr>
 </tbody>
 </table>
