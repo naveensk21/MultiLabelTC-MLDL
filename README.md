@@ -9,12 +9,24 @@ Scikit-learn, Matplotlib, NLTK, Gensim, Skmultilearn, Tensorflow, and Oputna
 ML Model Results
 
 |       |<td colspan=3>Binary Relevance |<td colspan=3>Classifier Chains|<td colspan=3>Label Powerset   |
+|-------|-------------------------------|-------------------------------|-------------------------------|
 |       | Precision | Recall | F1-Score | Precision | Recall | F1-Score | Precision | Recall | F1-Score |
 |-------|-------------------------------|-------------------------------|-------------------------------|
 |  SVM  |    0.73   |  0.46  |   0.56   |    0.66   |  0.43  |   0.52   |    0.53   |  0.47  |   0.50   |
 |  LR   |    0.71   |  0.40  |   0.51   |    0.60   |  0.46  |   0.52   |    0.61   |  0.47  |   0.53   |
 |  RF   |    0.94   |  0.20  |   0.33   |    0.91   |  0.16  |   0.28   |    0.62   |  0.48  |   0.52   |
 |  K-NN |    0.59   |  0.41  |   0.48   |    0.48   |  0.47  |   0.48   |    0.51   |  0.54  |   0.50   |
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0pky"></th>
+    <th class="tg-0pky">Binary Relevance</th>
+    <th class="tg-0pky">Classifier Chain</th>
+    <th class="tg-0pky">Label Powerset</th>
+  </tr>
+</thead>
+<tbody>
 
 DL Model Results
 
