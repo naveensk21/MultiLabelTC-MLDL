@@ -17,6 +17,7 @@ ML Model Results
 |  RF   |    0.94   |  0.20  |   0.33   |    0.91   |  0.16  |   0.28   |    0.62   |  0.48  |   0.52   |
 |  K-NN |    0.59   |  0.41  |   0.48   |    0.48   |  0.47  |   0.48   |    0.51   |  0.54  |   0.50   |
 
+
 <table class="tg">
 <thead>
   <tr>
@@ -27,6 +28,26 @@ ML Model Results
   </tr>
 </thead>
 <tbody>
+  <tr>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky">Precision <br></td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+  </tr>
+  <tr>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+  </tr>
+  <tr>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+    <td class="tg-0pky"></td>
+  </tr>
+</tbody>
+</table>
 
 DL Model Results
 
