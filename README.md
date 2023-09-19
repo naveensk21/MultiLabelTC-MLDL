@@ -7,7 +7,7 @@ OPP-115 Dataset
 - sanitized_policies
 
 # Libraries Used
-Scikit-learn, Matplotlib, NLTK, Gensim, Skmultilearn, Tensorflow, and Oputna 
+Scikit-learn, Matplotlib, NLTK, Gensim, Skmultilearn, Tensorflow, and Optuna 
 
 # Results 
 
