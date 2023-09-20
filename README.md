@@ -11,6 +11,12 @@ This thesis will implement privacy preference-ready plain text policies. The use
 
 The dataset used for the study is the OPP-115 dataset, which contains 115 websites and their privacy policies from various sectors, such as arts, business, etc., that are presented in natural language with their annotations. The label strings are selected from the OPP-115 dataset instead of the label data practices as it will provide users with further information and insights on the privacy policies presented to them. The OPP-115 dataset was annotated before the enactment of GDPR. Therefore, the latest DPV vocabulary will be mapped to the dataset. The mapped DPV vocabulary would modernize the labels in the OPP-155 dataset.
 
+# Key Objectives
+The thesis topic will address the following research questions:
+1. Which ML or DL techniques can produce the most precise predictions of the labels in the OPP-115 dataset?
+2. How does a possible mapping between the labeled OPP-115 dataset and DPV look like?
+3. How can a simple privacy language representation of the labeled dataset be modeled?
+
 # Dataset
 OPP-115 Dataset
 - pretty_print
