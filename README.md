@@ -23,7 +23,7 @@ The thesis topic will address the following research questions:
 - sanitized_policies
 
 # Libraries Used
-Scikit-learn, Matplotlib, NLTK, Gensim, Skmultilearn, Tensorflow, and Optuna 
+[Scikit-learn](https://scikit-learn.org/stable/install.html), [Matplotlib](https://matplotlib.org/), [NLTK](https://www.nltk.org/), [Gensim](https://pypi.org/project/gensim/), [Skmultilearn](http://scikit.ml/), [Tensorflow](https://www.tensorflow.org/guide/keras), and [Optuna](https://optuna.org/) 
 
 # Results 
 
