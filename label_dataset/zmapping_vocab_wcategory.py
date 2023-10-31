@@ -12,7 +12,7 @@ with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
 # gppr vocab path
-gdpr_dataset_path = '../dpv_vocab.json'
+gdpr_dataset_path = '../extracted_data/dpv_vocab.json'
 with open(gdpr_dataset_path) as fp:
     gdpr_vocab = json.load(fp)
 

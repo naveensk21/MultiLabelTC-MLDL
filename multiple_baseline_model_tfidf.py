@@ -36,7 +36,7 @@ warnings.filterwarnings('always')
 warnings.filterwarnings('ignore')
 
 # top x labels file path
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'extracted_data/top_40_labels_dataset.json'
 
 # list of classfiers to test
 classifiers = [

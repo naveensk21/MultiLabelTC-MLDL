@@ -1,10 +1,10 @@
 import json
 from typing import Dict
 
-clean_dataset_file_path = 'clean_combined_data.json'
+clean_dataset_file_path = 'extracted_data/clean_combined_data.json'
 
 # the labels and the times they appear in the dataset
-label_support_file_path = 'label_support.json'
+label_support_file_path = 'extracted_data/label_support.json'
 
 # initialzation of x top labels
 store_top_x = 40

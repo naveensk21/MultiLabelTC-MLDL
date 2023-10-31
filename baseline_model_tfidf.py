@@ -48,7 +48,7 @@ from sklearn.metrics import PrecisionRecallDisplay
 # all labels (post-cl) -> 3065 data
 # all label (pre-cl)    -> 3792 data
 
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'extracted_data/top_40_labels_dataset.json'
 
 
 def create_x_y():

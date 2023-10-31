@@ -2,7 +2,7 @@ import os.path
 import json
 
 # load the label dataset
-label_dataset_file_path = 'collected_labels.json'
+label_dataset_file_path = 'extracted_data/collected_labels.json'
 
 with open(label_dataset_file_path) as f:
   label_dataset = json.load(f)
@@ -65,7 +65,7 @@ collect_policy_text = load_all_policy_text('dataset/sanitized_policies')
 print(collect_policy_text)
 
 
-with open('collected_policy_text.json', 'w') as fp:
+with open('extracted_data/collected_policy_text.json', 'w') as fp:
   json.dump(collect_policy_text, fp)
 
 exit()
@@ -106,7 +106,7 @@ def search_add():
 
 # gets the key from policy_text
 def get_policyname_from_policy_text():
-  with open('collected_policy_text.json') as fp:
+  with open('extracted_data/collected_policy_text.json') as fp:
     policy_text_data = json.load(fp)
 
   for entry in policy_text_data:

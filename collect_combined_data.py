@@ -1,10 +1,10 @@
 import json
 
 # load labelled data and policy text data
-with open('collected_labels.json') as fp:
+with open('extracted_data/collected_labels.json') as fp:
     labelled_data = json.load(fp)
 
-with open('collected_policy_text.json') as fp:
+with open('extracted_data/collected_policy_text.json') as fp:
     policy_txt_data = json.load(fp)
 
 # with open('collected_dp_category.json') as fp:
@@ -50,7 +50,7 @@ def combined_data():
 joined_data = combined_data()
 
 # dump the data into json file
-with open('combined_data.json', 'w') as fp:
+with open('extracted_data/combined_data.json', 'w') as fp:
     json.dump(joined_data, fp)
 
 

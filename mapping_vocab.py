@@ -7,12 +7,12 @@ import pickle
 import re
 
 # top labels file path
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'extracted_data/top_40_labels_dataset.json'
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
 # gppr vocab path
-gdpr_dataset_path = 'dpv_vocab.json'
+gdpr_dataset_path = 'extracted_data/dpv_vocab.json'
 with open(gdpr_dataset_path) as fp:
     gdpr_vocab = json.load(fp)
 
@@ -116,8 +116,6 @@ single_data = single_predicted_data("If you do not want information collected th
 # display the associated set of labels single privacy policy
 print(single_data)
 
-exit()
-
 
 # multiple policy_text_predictions
 def multi_predicted_data(model, policy_text):
@@ -137,7 +135,7 @@ predicted_data = multi_predicted_data(loaded_model, padded)
 # print(predicted_data)
 
 # collect the label data into a json
-with open('pred_mapped_datatset.json', 'w') as fp:
+with open('extracted_data/pred_mapped_datatset.json', 'w') as fp:
     json.dump(predicted_data, fp)
 
 

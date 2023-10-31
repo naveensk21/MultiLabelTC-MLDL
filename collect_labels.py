@@ -97,6 +97,6 @@ collect_labels = load_all_csv_files('dataset/pretty_print')
 
 
 # collect the label data into a json
-with open('collected_labels.json', 'w') as fp:
+with open('extracted_data/collected_labels.json', 'w') as fp:
     json.dump(collect_labels, fp)
 

@@ -43,7 +43,7 @@ import pydot
 
 
 # load the top labels
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'extracted_data/top_40_labels_dataset.json'
 
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
@@ -148,7 +148,7 @@ def create_word_vect_dict(vocab):
     for word in vocab:
         wv_dict[word] = w2v_model.wv.get_vector(word)
     return wv_dict
-    pass
+
 
 
 word_vect_dict = create_word_vect_dict(vocab)

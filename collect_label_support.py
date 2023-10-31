@@ -1,10 +1,10 @@
 import json
 
 # data without 'bad' labels
-clean_dataset_file_path = 'clean_combined_data.json'
+clean_dataset_file_path = 'extracted_data/clean_combined_data.json'
 
 # data with label support
-label_support_file_path = 'label_support.json'
+label_support_file_path = 'extracted_data/label_support.json'
 
 # load dataset with the data practice category
 with open('label_dataset/zclean_combined_data_wcategory.json') as fp:

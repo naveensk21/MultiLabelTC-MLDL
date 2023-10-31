@@ -10,11 +10,11 @@ from sklearn.preprocessing import MultiLabelBinarizer
 
 
 
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'extracted_data/top_40_labels_dataset.json'
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
 
-all_label_file_path = 'label_support.json'
+all_label_file_path = 'extracted_data/label_support.json'
 with open(all_label_file_path) as fp:
     all_labels = json.load(fp)
 
@@ -22,7 +22,7 @@ dataset_file_path_category = 'label_dataset/zclean_combined_data_wcategory.json'
 with open(dataset_file_path_category) as fp:
     category_dataset = json.load(fp)
 
-dataset_file_path = 'combined_data.json'
+dataset_file_path = 'extracted_data/combined_data.json'
 with open(dataset_file_path) as fp:
     dataset_json2 = json.load(fp)
 

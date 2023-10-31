@@ -1,9 +1,9 @@
 import json
 
-dataset_file_path = 'combined_data.json'
+dataset_file_path = 'extracted_data/combined_data.json'
 
 # data without 'bad' labels
-clean_dataset_file_path = 'clean_combined_data.json'
+clean_dataset_file_path = 'extracted_data/clean_combined_data.json'
 
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)

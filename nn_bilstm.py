@@ -48,7 +48,7 @@ from optuna import trial
 
 
 # load the top labels
-dataset_file_path = 'top_40_labels_dataset.json'
+dataset_file_path = 'extracted_data/top_40_labels_dataset.json'
 
 with open(dataset_file_path) as fp:
     dataset_json = json.load(fp)
